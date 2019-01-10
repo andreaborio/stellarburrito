@@ -1,5 +1,5 @@
         /**
-         * changeTrust function
+         * payment function
          * Sender pays receiver an amount of coin.
          * you can specify more than one receiver and use custom asset and custom memo
          * @param {string} sender - The private key of the sender.      
