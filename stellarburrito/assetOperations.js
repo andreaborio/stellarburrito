@@ -12,11 +12,11 @@
          * 
          * 
          */
-        let accountop = require('./accountOperations')
-        let paymentop = require('./paymentOperations')
 
         async function createAsset(issuer, distributor, amount, assetCode, memoTypeTrust = 'text', memoTrust = 'default', memoTypePay = 'text', memoPay = 'default') {
             return new Promise((resolve, reject) => {
+                let accountop = require('./accountOperations')
+                let paymentop = require('./paymentOperations')        
                 var global = require('../global')
                 var config = require('../config')
                 let env = config.env
