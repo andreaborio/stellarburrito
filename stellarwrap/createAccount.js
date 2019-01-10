@@ -17,10 +17,10 @@
  * 
  */
 
-async function createAccount(privKey, memoTypeCreate, memoCreate,memoTypeTrust, memoTrust, issuer, assetCode, trustLimit) {
+async function createAccount(privKey, memoTypeCreate, memoCreate,startingBalance,memoTypeTrust, memoTrust, issuer, assetCode, trustLimit) {
     return new Promise((resolve, reject) => {
       var global = require('../global')
-      global.test()
+      global.init()
         .then(function (global) {
           let server,StellarSdk
           var config=require('../config')

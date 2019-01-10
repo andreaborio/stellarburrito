@@ -12,19 +12,20 @@
  * 
  */
 
-async function changeTrust(privKey, issuer, assetCode, trustLimit, memoType, memo, env) {
+async function changeTrust(privKey, issuer, assetCode, trustLimit, memoType, memo) {
   return new Promise((resolve, reject) => {
     var global = require('../global')
-    global.test()
+    var config = require('../config')
+    let env = config.env
+    global.init()
       .then(function (global) {
-        let server,StellarSdk
+        let server, StellarSdk
         if (typeof env != 'undefined' && env === "testnet") {
-          server = Object.assign( Object.create( Object.getPrototypeOf(global.testnet.server)), global.testnet.server)
-          StellarSdk = Object.assign( Object.create( Object.getPrototypeOf(global.testnet.StellarSdk)), global.testnet.StellarSdk)
-        }
-        else{
-         server = Object.assign( Object.create( Object.getPrototypeOf(global.public.server)), global.public.server)
-         StellarSdk =  Object.assign( Object.create( Object.getPrototypeOf(global.public.StellarSdk)), global.public.StellarSdk)
+          server = Object.assign(Object.create(Object.getPrototypeOf(global.testnet.server)), global.testnet.server)
+          StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.testnet.StellarSdk)), global.testnet.StellarSdk)
+        } else {
+          server = Object.assign(Object.create(Object.getPrototypeOf(global.public.server)), global.public.server)
+          StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.public.StellarSdk)), global.public.StellarSdk)
         }
         var memoFinal;
         switch (memoType) {
