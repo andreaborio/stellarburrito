@@ -1,4 +1,4 @@
-module.exports.test = async function () {
+module.exports.init = async function () {
    return new Promise((resolve, reject) => {
       const StellarSdk = require('stellar-sdk');
       var server = new StellarSdk.Server('https://horizon.stellar.org')
