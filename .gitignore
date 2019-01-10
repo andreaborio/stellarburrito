@@ -1,7 +1,4 @@
 .gitignore
 node_modules
-out
-jsdoc-template
-docs
 createDocs.sh
-.jsdoc.json
+jsdoc.json
