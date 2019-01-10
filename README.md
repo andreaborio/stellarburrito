@@ -1,2 +1,2 @@
 # stellarburrito
-docs on http://www.winetrack.it/stellarburrito/
+docs on https://www.winetrack.it/stellarburrito/
