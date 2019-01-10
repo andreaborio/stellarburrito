@@ -84,7 +84,7 @@
       
     
 
-    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li></ul>
+    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#Pay">Pay</a></li></ul>
   </nav>
 
   <div id="main">
@@ -236,7 +236,7 @@ async function createAccount(privKey, memoTypeCreate, memoCreate, startingBalanc
                 var memoFinal;
                 switch (memoType) {
                   case 'text':
-                    memoFinal = StellarSdk.Memo.text("ok")
+                    memoFinal = StellarSdk.Memo.text(memo)
                     break;
                   case 'id':
                     memoFinal = StellarSdk.Memo.id(memo)
@@ -279,6 +279,7 @@ async function createAccount(privKey, memoTypeCreate, memoCreate, startingBalanc
               })
           })
         }
+        //TODO MergeAccount, createMultipleAccount,Trust Multiple asset
         module.exports = {
           createAccount,
           changeTrust

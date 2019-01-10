@@ -135,7 +135,7 @@ async function createAccount(privKey, memoTypeCreate, memoCreate, startingBalanc
                 var memoFinal;
                 switch (memoType) {
                   case 'text':
-                    memoFinal = StellarSdk.Memo.text("ok")
+                    memoFinal = StellarSdk.Memo.text(memo)
                     break;
                   case 'id':
                     memoFinal = StellarSdk.Memo.id(memo)
@@ -178,6 +178,7 @@ async function createAccount(privKey, memoTypeCreate, memoCreate, startingBalanc
               })
           })
         }
+        //TODO MergeAccount, createMultipleAccount,Trust Multiple asset
         module.exports = {
           createAccount,
           changeTrust
