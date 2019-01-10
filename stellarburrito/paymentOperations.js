@@ -13,11 +13,8 @@
          * 
          */
 
-        async function Pay(sender, receiver, amount, assetCode='native', issuer='native', memoType='text', memo='def') {
+        async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'native', memoType = 'text', memo = 'def') {
             return new Promise((resolve, reject) => {
-                console.log(memo)
-                if (amount > 100)
-                    reject("LibErr_ Can't add more than 100 payments to a transaction")
                 var global = require('../global')
                 var config = require('../config')
                 let env = config.env
@@ -46,7 +43,8 @@
                                 reject('invalid memo type')
                                 break;
                         }
-                        if (issuer === "native" && assetCode === "native")
+                        let asset
+                        if (issuer == "native" && assetCode == "native")
                             asset = new StellarSdk.Asset.native()
                         else
                             asset = new StellarSdk.Asset(assetCode, issuer)
@@ -62,26 +60,34 @@
                             })
                             .then(function (sourceAccount) {
                                 let builder = new StellarSdk.TransactionBuilder(sourceAccount)
-                                for (var w = 0; w < receiver.length; w++) {
-                                    console.log(receiver[w])
+                                if (typeof receiver == "string")
                                     builder.addOperation(StellarSdk.Operation.payment({
-                                        destination: receiver[w],
+                                        destination: receiver,
                                         asset,
                                         amount
                                     }))
+                                else {
+                                    for (var w = 0; w < receiver.length; w++) {
+                                        builder.addOperation(StellarSdk.Operation.payment({
+                                            destination: receiver[w],
+                                            asset,
+                                            amount
+                                        }))
+                                    }
                                 }
                                 builder.addMemo(memoFinal)
                                 let transaction = builder.build()
                                 transaction.sign(des)
                                 return server.submitTransaction(transaction)
-
-                            })
-                            .then(function (result) {
-                                resolve(result)
                             })
                             .catch(function (error) {
                                 reject('Tx error_' + error)
                             })
+                            .then(function (result) {
+                                console.log(result)
+                                resolve(result)
+                            })
+
 
 
                     })
