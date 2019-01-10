@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      changeTrust - Documentation
+      Global - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -82,13 +82,13 @@
       
     
 
-    <h3>Classes</h3><ul><li id="changeTrust-nav"><a href="changeTrust.html">changeTrust</a></li><li id="createAccount-nav"><a href="createAccount.html">createAccount</a></li></ul>
+    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li></ul>
   </nav>
 
   <div id="main">
     
       <h1 class="page-title">
-        changeTrust
+        Global
       </h1>
     
 
@@ -99,7 +99,7 @@
     
       <h2>
         
-        changeTrust
+        
         
       </h2>
 
@@ -109,6 +109,66 @@
 
   <article>
     <div class="container-overview">
+      
+        
+
+        
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+        
+      
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+      <h3 class="subsection-title">Methods</h3>
+
       
         
 
@@ -122,7 +182,7 @@
       </svg>
     </a>
     <h4 class="name" id="changeTrust">
-      <span class="type-signature">(async) </span>new changeTrust<span class="signature">(privKey, memoType, memo, issuer, assetCode, trustLimit)</span><span class="type-signature"></span>
+      <span class="type-signature">(async) </span>changeTrust<span class="signature">(privKey, memoType, memo, issuer, assetCode, trustLimit)</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -362,17 +422,6 @@
   
 
   
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-      <ul>
-        
-          <li>
-            Andrea Borio andrea.borio@outlook.com
-          </li>
-        
-      </ul>
-    </dd>
-  
 
   
 
@@ -385,7 +434,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="changeTrust.js.html">changeTrust.js</a>, <a href="changeTrust.js.html#line15">line 15</a>
+          <a href="accountOperations.js.html">accountOperations.js</a>, <a href="accountOperations.js.html#line120">line 120</a>
         </li>
       </ul>
     </dd>
@@ -412,20 +461,395 @@
 
 
       
-    </div>
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#createAccount">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="createAccount">
+      <span class="type-signature">(async) </span>createAccount<span class="signature">(privKey, memoTypeCreate, memoCreate, memoTypeTrust, startingBalance, memoTrust, issuer, assetCode, trustLimit)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>privKey</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
 
     
 
-    
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The private key of the creator account.</p>
+          
+        </td>
+      </tr>
 
     
+      <tr>
+        
+          <td class="name"><code>memoTypeCreate</code></td>
+        
 
-     
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
 
     
 
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The type of memo the create transaction that you want create (text,id,return)</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>memoCreate</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
     
 
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The content of memo the create transaction that you want create</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>memoTypeTrust</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The type of memo the transaction that you want create (text,id,return)</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>startingBalance</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The strarting balance of created account</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>memoTrust</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The content of memo the change trust transaction that you want create (text,id,return)</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>issuer</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The public key of the issuer</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>assetCode</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The assetCode of the asset that you want to trust</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>trustLimit</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The amount of coin that you want to trust from this issuer</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+      <ul>
+        
+          <li>
+            Andrea Borio andrea.borio(at)outlook.com
+
+Create new account function
+privKey, memoTypeCreate, memoCreate are mandatory
+Add a trustline on the new account overloading this function
+          </li>
+        
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="accountOperations.js.html">accountOperations.js</a>, <a href="accountOperations.js.html#line21">line 21</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
     
 
     
