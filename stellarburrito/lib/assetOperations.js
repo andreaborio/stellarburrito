@@ -17,8 +17,8 @@
             return new Promise((resolve, reject) => {
                 let accountop = require('./accountOperations')
                 let paymentop = require('./paymentOperations')
-                var global = require('./global')
-                var config = require('./config')
+                let global = require('../settings/global')
+                let config = require('../settings/config')
                 let env = config.env
                 global.init()
                     .then(function (global) {
@@ -34,14 +34,15 @@
                             .then(function (res) {
                                 paymentop.Pay(issuer.secret(), distributor.publicKey(), amount, assetCode, issuer.publicKey())
                                     .then(function (res) {
-                                        resolve('asset created')
+                                        resolve('Asset created')
                                     })
                                     .catch(function (err) {
-                                        reject('payment error, check keys')
+                                        reject('StellarBurrito_TX_ERR payment error, check keys\n\r'+err)
                                     })
                             })
                             .catch(function (err) {
-                                reject('trust error')
+                                console.log(err)
+                                reject('StellarBurrito_TX_ERR trust_op error\n\r'+err)
                             })
                     })
             })

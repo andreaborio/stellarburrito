@@ -14,17 +14,15 @@
  * @param {string} issuer - The public key of the issuer 
  * @param {string} assetCode - The assetCode of the asset that you want to trust
  * @param {string} trustLimit - The amount of coin that you want to trust from this issuer
- * 
- * 
  */
 
 async function createAccount(privKey, memoTypeCreate = 'test', memoCreate = 'default', startingBalance = '1.501', memoTypeTrust = 'text', memoTrust = 'default', issuer = 'unsetted', assetCode = 'unsetted', trustLimit = 'unsetted') {
   return new Promise((resolve, reject) => {
-    var global = require('./global')
+    let global = require('../settings/global')
+    let config = require('../settings/config')
     global.init()
       .then(function (global) {
         let server, StellarSdk
-        var config = require('./config')
         let env = config.env
         if (typeof env != 'undefined' && env === "testnet") {
           server = Object.assign(Object.create(Object.getPrototypeOf(global.test.server)), global.test.server)
@@ -33,7 +31,7 @@ async function createAccount(privKey, memoTypeCreate = 'test', memoCreate = 'def
           server = Object.assign(Object.create(Object.getPrototypeOf(global.pub.server)), global.pub.server)
           StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.pub.StellarSdk)), global.pub.StellarSdk)
         }
-        var memoFinalCreate
+        let memoFinalCreate
         switch (memoTypeCreate) {
           case 'text':
             memoFinalCreate = StellarSdk.Memo.text(memoCreate)
@@ -119,18 +117,18 @@ async function createAccount(privKey, memoTypeCreate = 'test', memoCreate = 'def
 
 async function changeTrust(privKey, issuer, assetCode, trustLimit, memoType = 'text', memo = 'default') {
   return new Promise((resolve, reject) => {
-    var global = require('./global')
-    var config = require('./config')
+    var global = require('../settings/global')
+    var config = require('../settings/config')
     let env = config.env
     global.init()
       .then(function (global) {
         let server, StellarSdk
         if (typeof env != 'undefined' && env === "testnet") {
-          server = Object.assign(Object.create(Object.getPrototypeOf(global.testnet.server)), global.testnet.server)
-          StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.testnet.StellarSdk)), global.testnet.StellarSdk)
+          server = Object.assign(Object.create(Object.getPrototypeOf(global.test.server)), global.test.server)
+          StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.test.StellarSdk)), global.test.StellarSdk)
         } else {
-          server = Object.assign(Object.create(Object.getPrototypeOf(global.public.server)), global.public.server)
-          StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.public.StellarSdk)), global.public.StellarSdk)
+          server = Object.assign(Object.create(Object.getPrototypeOf(global.pub.server)), global.pub.server)
+          StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.pub.StellarSdk)), global.pub.StellarSdk)
         }
         var memoFinal;
         switch (memoType) {
@@ -150,8 +148,7 @@ async function changeTrust(privKey, issuer, assetCode, trustLimit, memoType = 't
         let des = StellarSdk.Keypair.fromSecret(privKey)
         server.loadAccount(des.publicKey())
           .catch(StellarSdk.NotFoundError, function (error) {
-            reject( 'StellarBurrito_KEY_ERR The destination account for change_trust_op doesn\'t exists.',
-             );
+            reject('StellarBurrito_KEY_ERR The destination account for change_trust_op doesn\'t exists.', );
           })
           .then(function (sourceAccount) {
             let asset = new StellarSdk.Asset(assetCode, issuer)
