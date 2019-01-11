@@ -125,15 +125,14 @@
                     .then(function (global) {
                         let StellarSdk
                         if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
-                            StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.testnet.StellarSdk)), global.testnet.StellarSdk)
+                            StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.test.StellarSdk)), global.test.StellarSdk)
                         } else {
-                            StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.public.StellarSdk)), global.public.StellarSdk)
+                            StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.pub.StellarSdk)), global.pub.StellarSdk)
                         }
                         issuer = StellarSdk.Keypair.fromSecret(issuer)
                         distributor = StellarSdk.Keypair.fromSecret(distributor)
                         accountop.changeTrust(distributor.secret(), issuer.publicKey(), assetCode, amount)
                             .then(function (res) {
-                                console.log('CHANGE TRUST \n\r' + JSON.stringify(res))
                                 paymentop.Pay(issuer.secret(), distributor.publicKey(), amount, assetCode, issuer.publicKey())
                                     .then(function (res) {
                                         resolve('asset created')
