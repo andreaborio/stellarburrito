@@ -2,12 +2,12 @@ var ao=require( './stellarburrito/accountOperations.js')
 var pay=require('./stellarburrito/paymentOperations.js')
 var assetop=require('./stellarburrito/assetOperations.js')
 let dest=['GDZKL2BWHMGBDBPPHZGQ4RQNQBT52U266BM6TODZLWAUNNIWC43ZODJQ','GB7LEV7ZBSRW5WEJ5NYCDAHK3VFH2QKP5SBZEV3SQNCVFX7TKSET2GDV']
-let source='SDZNA6DLCNXAUWOYZJV3P3X4FU7EKFINN6NISJLG3WXZMMX3MAOKOB5T'
-let issuer='SAKMYCJKHC6VAB57Y275KQ4HZ7WSSY5XECPIDRZQT3XGTZ5QNIWYKFZL'
+let distributor='SCNIYIP6WLTJYOXBQVAWQQJMYIXIIAGFKEJDAZPY4T5FUZL2OODV5PNR'
+let issuer='SCYTGAZEMS4Y3EUX2DBAKQPVX6AK4N6OMIKJQXYCRFC573DAECWLFYYY'
 /*var aus=issuer
 issuer=source
 source=aus*/
-assetop.createAsset(issuer,source,'1','n2')
+assetop.createAsset(issuer,distributor,'42342','tesfinale')
                 .then(function (sku){
                     console.log('andato bene')
                 })

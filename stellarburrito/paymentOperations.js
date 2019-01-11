@@ -9,14 +9,11 @@
          * @param {string} issuer - The amount of coin that you want to trust from this issuer
          * @param {string} memoType - The type of memo of the transaction that you want create (text,id,return)
          * @param {string} memo - The content of memo of the change trust transaction that you want create (text,id,return)
-         * 
-         * 
          */
-
         async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'native', memoType = 'text', memo = 'def') {
             return new Promise((resolve, reject) => {
-                var global = require('../global')
-                var config = require('../config')
+                var global = require('./global')
+                var config = require('./config')
                 let env = config.env
                 global.init()
                     .then(function (global) {
@@ -40,24 +37,15 @@
                                 memoFinal = StellarSdk.Memo.return(memo)
                                 break;
                             default:
-                                reject('invalid memo type')
+                                reject('StellarBurrito_FORMAT_ERR Invalid memo type')
                                 break;
                         }
-                        let asset
                         if (issuer == "native" && assetCode == "native")
                             asset = new StellarSdk.Asset.native()
                         else
                             asset = new StellarSdk.Asset(assetCode, issuer)
-
-
                         let des = StellarSdk.Keypair.fromSecret(sender)
                         server.loadAccount(des.publicKey())
-                            .catch(StellarSdk.NotFoundError, function (error) {
-                                reject({
-                                    message: 'The sender account for payment doesn\'t exists.',
-                                    errCode: 404
-                                });
-                            })
                             .then(function (sourceAccount) {
                                 let builder = new StellarSdk.TransactionBuilder(sourceAccount)
                                 if (typeof receiver == "string")
@@ -80,19 +68,20 @@
                                 transaction.sign(des)
                                 return server.submitTransaction(transaction)
                             })
-                            .catch(function (error) {
-                                reject('Tx error_' + error)
+                            .catch(StellarSdk.NotFoundError, function (error) {
+                                console.log(error)
+                                reject('StellarBurrito_KEY_ERR The sender account for payment_op doesn\'t exists.')
+                                    .then(function (result) {
+                                        resolve(result)
+                                    })
+                                    .catch(function (error) {
+                                        reject('StellarBurrito_TX_ERR ' + error)
+                                    })
                             })
-                            .then(function (result) {
-                                console.log(result)
-                                resolve(result)
-                            })
-
-
-
                     })
             })
         }
+
         module.exports = {
             Pay
         }

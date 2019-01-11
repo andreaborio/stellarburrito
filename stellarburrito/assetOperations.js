@@ -16,13 +16,13 @@
         async function createAsset(issuer, distributor, amount, assetCode, memoTypeTrust = 'text', memoTrust = 'default', memoTypePay = 'text', memoPay = 'default') {
             return new Promise((resolve, reject) => {
                 let accountop = require('./accountOperations')
-                let paymentop = require('./paymentOperations')        
-                var global = require('../global')
-                var config = require('../config')
+                let paymentop = require('./paymentOperations')
+                var global = require('./global')
+                var config = require('./config')
                 let env = config.env
                 global.init()
                     .then(function (global) {
-                        let server, StellarSdk
+                        let StellarSdk
                         if (typeof env != 'undefined' && env === "testnet") {
                             StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.testnet.StellarSdk)), global.testnet.StellarSdk)
                         } else {
@@ -30,22 +30,19 @@
                         }
                         issuer = StellarSdk.Keypair.fromSecret(issuer)
                         distributor = StellarSdk.Keypair.fromSecret(distributor)
-                        console.log("%s %s %s %s %s",distributor.secret(), issuer.publicKey(), assetCode, amount,distributor.publicKey())
                         accountop.changeTrust(distributor.secret(), issuer.publicKey(), assetCode, amount)
                             .then(function (res) {
-                                paymentop.Pay(issuer.secret(), distributor.publicKey(), amount, assetCode, issuer.PublicKey())
-                                .then(function (res) {
-                                    resolve('asset created')
-                                })
-                                    .catch(function (res) {
+                                console.log('CHANGE TRUST \n\r' + JSON.stringify(res))
+                                paymentop.Pay(issuer.secret(), distributor.publicKey(), amount, assetCode, issuer.publicKey())
+                                    .then(function (res) {
+                                        resolve('asset created')
+                                    })
+                                    .catch(function (err) {
                                         reject('payment error, check keys')
                                     })
-                                   
-
-
                             })
                             .catch(function (err) {
-                                reject('trust error probably you\'re trying to trust the same asset twice')
+                                reject('trust error')
                             })
                     })
             })

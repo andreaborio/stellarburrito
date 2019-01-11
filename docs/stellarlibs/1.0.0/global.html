@@ -82,7 +82,7 @@
       
     
 
-    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#Pay">Pay</a></li></ul>
+    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#Pay">Pay</a></li></ul>
   </nav>
 
   <div id="main">
@@ -1252,6 +1252,181 @@ you can specify more than one receiver and use custom asset and custom memo</p>
   
 
   <span class='name-container'>
+    <a class="link-icon" href="#init">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="init">
+      <span class="type-signature"></span>init<span class="signature">(pubnet_horizon, testnet_horizon)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Change HERE your horizon server params</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>pubnet_horizon</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Address of your horizon istance for publicnet, by default horizon.stellar.org</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>testnet_horizon</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Address of your horizon istance for testnet, by default horizon.stellar.org</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="global.js.html">global.js</a>, <a href="global.js.html#line6">line 6</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
     <a class="link-icon" href="#Pay">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
@@ -1579,7 +1754,7 @@ you can specify more than one receiver and use custom asset and custom memo</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="paymentOperations.js.html">paymentOperations.js</a>, <a href="paymentOperations.js.html#line16">line 16</a>
+          <a href="paymentOperations.js.html">paymentOperations.js</a>, <a href="paymentOperations.js.html#line13">line 13</a>
         </li>
       </ul>
     </dd>
