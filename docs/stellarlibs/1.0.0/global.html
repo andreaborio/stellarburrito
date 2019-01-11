@@ -82,7 +82,7 @@
       
     
 
-    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#Pay">Pay</a></li></ul>
+    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li></ul>
   </nav>
 
   <div id="main">
@@ -1252,6 +1252,231 @@ you can specify more than one receiver and use custom asset and custom memo</p>
   
 
   <span class='name-container'>
+    <a class="link-icon" href="#getLedgers">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="getLedgers">
+      <span class="type-signature">(async) </span>getLedgers<span class="signature">(limit, order, cursor)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>getLedgers
+retrive ledgers from horizon</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+        <th>Default</th>
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>limit</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      number
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+              10
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>Max limit of transactions that you want</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>order</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+              desc
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>The order of the results ASC DESC</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>cursor</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+              now
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>The cursor for querying payments</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="lib_ledger.js.html">lib/ledger.js</a>, <a href="lib_ledger.js.html#line8">line 8</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
     <a class="link-icon" href="#init">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
@@ -1755,6 +1980,264 @@ you can specify more than one receiver and use custom asset and custom memo</p>
       <ul class="dummy">
         <li>
           <a href="lib_paymentOperations.js.html">lib/paymentOperations.js</a>, <a href="lib_paymentOperations.js.html#line13">line 13</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#paymentsHistory">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="paymentsHistory">
+      <span class="type-signature">(async) </span>paymentsHistory<span class="signature">(account, limit, order, cursor)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>transactionsHistory
+retrive history of transactions of an account from horizon</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+        <th>Default</th>
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>account</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>The public key of the account.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>limit</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      number
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+              10
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>Max limit of transactions that you want</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>order</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+              desc
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>The order of the results ASC DESC</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>cursor</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+              now
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>The cursor for querying payments</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="lib_history.js.html">lib/history.js</a>, <a href="lib_history.js.html#line9">line 9</a>
         </li>
       </ul>
     </dd>

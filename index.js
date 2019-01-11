@@ -4,17 +4,28 @@ var assetop=require('./stellarburrito/lib/assetOperations.js')
 let dest=['GDZKL2BWHMGBDBPPHZGQ4RQNQBT52U266BM6TODZLWAUNNIWC43ZODJQ','GB7LEV7ZBSRW5WEJ5NYCDAHK3VFH2QKP5SBZEV3SQNCVFX7TKSET2GDV']
 let distributor='SCNIYIP6WLTJYOXBQVAWQQJMYIXIIAGFKEJDAZPY4T5FUZL2OODV5PNR'
 let issuer='SCYTGAZEMS4Y3EUX2DBAKQPVX6AK4N6OMIKJQXYCRFC573DAECWLFYYY'
+let hi=require('./stellarburrito/lib/history.js')
+let le=require('./stellarburrito/lib/ledger.js')
+
 /*var aus=issuer
 issuer=source
 source=aus*/
+le.getLedgers()
+.then(function(sku)
+{
+    console.log(sku)
+})
+/*
+hi.paymentsHistory('GCLNXIEAVJLQRIUOAE44IV5TFHHVS6Z6K45J43FJ2SWBKH2DUJO2QA6S',50)
+.then(function (sku){
+    console.log(sku)
+})
 assetop.createAsset(issuer,distributor,'42342','tefinale')
                 .then(function (sku){
-                    console.log('andato bene')
+                    console.log('andato bene'+sku)
                 })
                 .catch(function (sku){
-
                     console.log('andata male'+ sku)
-
                 })
 /*
 ao.changeTrust('SDZNA6DLCNXAUWOYZJV3P3X4FU7EKFINN6NISJLG3WXZMMX3MAOKOB5T','GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P','BTC',"5020",'text','eskereeeee','testnet')
