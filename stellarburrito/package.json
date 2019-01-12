@@ -1,0 +1,58 @@
+{
+  "_from": "stellarburrito",
+  "_id": "stellarburrito@1.0.1",
+  "_inBundle": false,
+  "_integrity": "sha512-T0kkNliYodBRj8YvZDVdkANH15AJmf2B0ADzyvtDdgfEPTUk4ADcr9q/YAjLu75PJdoveHr0sew8hEjM1J9yqA==",
+  "_location": "/stellarburrito",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "stellarburrito",
+    "name": "stellarburrito",
+    "escapedName": "stellarburrito",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/stellarburrito/-/stellarburrito-1.0.1.tgz",
+  "_shasum": "697ee02448305aa33df6ac0e1d33475b06cee251",
+  "_spec": "stellarburrito",
+  "_where": "/home/chinaski/Desktop/Progetti/Winetrack_PROD/wine",
+  "author": {
+    "name": "Andrea Borio"
+  },
+  "bugs": {
+    "url": "https://github.com/andreaborio/stellarburrito/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Stellar JS SDK wrapper, Make stellar simple!",
+  "directories": {
+    "lib": "lib"
+  },
+  "homepage": "https://github.com/andreaborio/stellarburrito#readme",
+  "keywords": [
+    "stellar",
+    "js",
+    "stellarsdk",
+    "jssdk",
+    "blockchain",
+    "nodejs"
+  ],
+  "license": "ISC",
+  "main": "StellarBurrito.js",
+  "name": "stellarburrito",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreaborio/stellarburrito.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.1"
+}

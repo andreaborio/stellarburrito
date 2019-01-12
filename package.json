@@ -16,5 +16,8 @@
   },
   "script": {
     "generate-docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose"
+  },
+  "devDependencies": {
+    "jest": "^23.6.0"
   }
 }
