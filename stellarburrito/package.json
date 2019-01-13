@@ -1,6 +1,5 @@
 {
   "_from": "stellarburrito",
-  "_id": "stellarburrito@1.0.1",
   "_inBundle": false,
   "_integrity": "sha512-T0kkNliYodBRj8YvZDVdkANH15AJmf2B0ADzyvtDdgfEPTUk4ADcr9q/YAjLu75PJdoveHr0sew8hEjM1J9yqA==",
   "_location": "/stellarburrito",
@@ -23,9 +22,7 @@
   "_shasum": "697ee02448305aa33df6ac0e1d33475b06cee251",
   "_spec": "stellarburrito",
   "_where": "/home/chinaski/Desktop/Progetti/Winetrack_PROD/wine",
-  "author": {
-    "name": "Andrea Borio"
-  },
+  "author": "Andrea Borio",
   "bugs": {
     "url": "https://github.com/andreaborio/stellarburrito/issues"
   },
@@ -54,5 +51,5 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "1.0.1"
+  "version": "1.0.2"
 }
