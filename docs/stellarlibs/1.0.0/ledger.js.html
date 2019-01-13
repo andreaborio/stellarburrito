@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Home - Documentation
+      ledger.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -51,14 +53,14 @@
 
   <div class="top-nav-wrapper">
     <ul>
-      <li  class="active" >
+      <li >
         <a href="index.html">
           
-          
-            <svg fill="#0095dd" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
               <path d="M0 0h24v24H0z" fill="none"/>
             </svg>
+          
           
         </a>
       </li>
@@ -87,24 +89,78 @@
 
   <div id="main">
     
+      <h1 class="page-title">
+        ledger.js
+      </h1>
+    
 
     
       
 
-
-
-    
-
-      
-
-
-  <section class="readme">
-    <article>
-      <h1>stellarburrito</h1><p>docs on https://<a href="http://www.winetrack.it/stellarburrito/">www.winetrack.it/stellarburrito/</a>
-<img src="https://i.ibb.co/dDRV0Rm/logo.png" alt="Mymage"></p>
-    </article>
-  </section>
-
+<section>
+  <article>
+    <pre class="prettyprint source linenums"><code>/**
+ * getLedgers
+ * retrive ledgers from horizon    
+ * @param {number} limit - Max limit of transactions that you want
+ * @param {string} order - The order of the results ASC DESC
+ * @param {string} cursor - The cursor for querying payments 
+ */
+async function getLedgers(limit = 10, order = 'desc', cursor = 'now') {
+	return new Promise((resolve, reject) => {
+		let config = require('./config')
+		let server
+		let env = config.env
+		let StellarSdk = require('stellar-sdk')
+		if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
+			StellarSdk.Network.useTestNetwork()
+			server = new StellarSdk.Server(config.testnet_horizon)
+		} else {
+			StellarSdk.Network.usePublicNetwork()
+			server = new StellarSdk.Server(config.pubnet_horizon)
+		}
+		server.ledgers()
+			.order(order)
+			.limit(limit)
+			.cursor(cursor)
+			.call()
+			.then(function (page) {
+				let ledgers = {
+					ledgers: []
+				};
+				let i = 0
+				while (i &lt; page.records.length) {
+					ledgers.ledgers.push({
+						'id': page.records[i].id,
+						'paging_token': page.records[i].paging_token,
+						'hash': page.records[i].hash,
+						'prev_hash': page.records[i].prev_hash,
+						'sequence': page.records[i].sequence,
+						'transaction_count': page.records[i].transaction_count,
+						'operation_count': page.records[i].operation_count,
+						'closed_at': page.records[i].closed_at,
+						'total_coins': page.records[i].total_coins,
+						'fee_pool': page.records[i].fee_pool,
+						'base_fee_in_stroops': page.records[i].base_fee_in_stroops,
+						'base_reserve_in_stroops': page.records[i].base_reserve_in_stroops,
+						'max_tx_set_size': page.records[i].max_tx_set_size,
+						'protocol_version': page.records[i].protocol_version,
+						'header_xdr': page.records[i].header_xdr
+					})
+					i++
+				}
+				resolve(ledgers)
+			})
+			.catch(function (err) {
+				reject('StellarBurrito_HORIZON_ERR can\'t load ledgers \n\r' + err)
+			})
+	})
+}
+module.exports = {
+	getLedgers
+}</code></pre>
+  </article>
+</section>
 
     
 

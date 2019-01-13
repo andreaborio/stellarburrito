@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Home - Documentation
+      paymentOperations.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -51,14 +53,14 @@
 
   <div class="top-nav-wrapper">
     <ul>
-      <li  class="active" >
+      <li >
         <a href="index.html">
           
-          
-            <svg fill="#0095dd" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
               <path d="M0 0h24v24H0z" fill="none"/>
             </svg>
+          
           
         </a>
       </li>
@@ -87,24 +89,102 @@
 
   <div id="main">
     
+      <h1 class="page-title">
+        paymentOperations.js
+      </h1>
+    
 
     
       
 
+<section>
+  <article>
+    <pre class="prettyprint source linenums"><code>/**
+ * payment function
+ * Sender pays receiver an amount of coin.
+ * you can specify more than one receiver and use custom asset and custom memo
+ * @param {string} sender - The private key of the sender.      
+ * @param {string} receiver - The public key of the receiver
+ * @param {string} amount - The amount of coins that sender pays to receiver 
+ * @param {string} assetCode - The assetCode of the asset that you want to trust
+ * @param {string} issuer - The amount of coin that you want to trust from this issuer
+ * @param {string} memoType - The type of memo of the transaction that you want create (text,id,return)
+ * @param {string} memo - The content of memo of the change trust transaction that you want create (text,id,return)
+ */
+async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'native', memoType = 'text', memo = 'def') {
+    return new Promise((resolve, reject) => {
+        let config = require('./config')
+        let server
+        let env = config.env
+        let StellarSdk = require('stellar-sdk')
+        if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
+            StellarSdk.Network.useTestNetwork()
+            server = new StellarSdk.Server(config.testnet_horizon)
+        } else {
+            StellarSdk.Network.usePublicNetwork()
+            server = new StellarSdk.Server(config.pubnet_horizon)
+        }
+        let memoFinal, asset;
+        switch (memoType) {
+            case 'text':
+                memoFinal = StellarSdk.Memo.text(memo)
+                break;
+            case 'id':
+                memoFinal = StellarSdk.Memo.id(memo)
+                break;
+            case 'return':
+                memoFinal = StellarSdk.Memo.return(memo)
+                break;
+            default:
+                reject('StellarBurrito_FORMAT_ERR Invalid memo type')
+                break;
+        }
 
+        if (issuer == "native" &amp;&amp; assetCode == "native")
+            asset = new StellarSdk.Asset.native()
+        else
+            asset = new StellarSdk.Asset(assetCode, issuer)
+        let des = StellarSdk.Keypair.fromSecret(sender)
+        server.loadAccount(des.publicKey())
+            .then(function (sourceAccount) {
+                let builder = new StellarSdk.TransactionBuilder(sourceAccount)
+                if (typeof receiver == "string")
+                    builder.addOperation(StellarSdk.Operation.payment({
+                        destination: receiver,
+                        asset,
+                        amount
+                    }))
+                else {
+                    for (var w = 0; w &lt; receiver.length; w++) {
+                        builder.addOperation(StellarSdk.Operation.payment({
+                            destination: receiver[w],
+                            asset,
+                            amount
+                        }))
+                    }
+                }
+                builder.addMemo(memoFinal)
+                let transaction = builder.build()
+                transaction.sign(des)
+                server.submitTransaction(transaction)
+                    .then(function (result) {
+                        resolve(result)
+                    })
+                    .catch(function (error) {
+                        reject('StellarBurrito_TX_ERR ' + error)
+                    })
+            })
+            .catch(StellarSdk.NotFoundError, function (error) {
+                reject('StellarBurrito_KEY_ERR The sender account for payment_op doesn\'t exists.')
+            })
+    })
+}
 
-    
-
-      
-
-
-  <section class="readme">
-    <article>
-      <h1>stellarburrito</h1><p>docs on https://<a href="http://www.winetrack.it/stellarburrito/">www.winetrack.it/stellarburrito/</a>
-<img src="https://i.ibb.co/dDRV0Rm/logo.png" alt="Mymage"></p>
-    </article>
-  </section>
-
+module.exports = {
+    Pay
+}</code></pre>
+  </article>
+</section>
 
     
 
