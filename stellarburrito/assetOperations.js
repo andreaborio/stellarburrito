@@ -17,33 +17,32 @@ async function createAsset(issuer, distributor, amount, assetCode, memoTypeTrust
     return new Promise((resolve, reject) => {
         let accountop = require('./accountOperations')
         let paymentop = require('./paymentOperations')
-        let global = require('./global')
         let config = require('./config')
+        let server
         let env = config.env
-        global.init()
-            .then(function (global) {
-                let StellarSdk
-                if (typeof env != 'undefined' && env === "testnet") {
-                    StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.test.StellarSdk)), global.test.StellarSdk)
-                } else {
-                    StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.pub.StellarSdk)), global.pub.StellarSdk)
-                }
-                issuer = StellarSdk.Keypair.fromSecret(issuer)
-                distributor = StellarSdk.Keypair.fromSecret(distributor)
-                accountop.changeTrust(distributor.secret(), issuer.publicKey(), assetCode, amount)
+        let StellarSdk = require('stellar-sdk')
+        if (typeof env != 'undefined' && env === "testnet") {
+            server = new StellarSdk.Server(config.testnet_horizon)
+            StellarSdk.Network.useTestNetwork()
+        } else {
+            server = new StellarSdk.Server(config.pubnet_horizon)
+            StellarSdk.Network.usePublicNetwork()
+        }
+        issuer = StellarSdk.Keypair.fromSecret(issuer)
+        distributor = StellarSdk.Keypair.fromSecret(distributor)
+        accountop.changeTrust(distributor.secret(), issuer.publicKey(), assetCode, amount)
+            .then(function (res) {
+                paymentop.Pay(issuer.secret(), distributor.publicKey(), amount, assetCode, issuer.publicKey())
                     .then(function (res) {
-                        paymentop.Pay(issuer.secret(), distributor.publicKey(), amount, assetCode, issuer.publicKey())
-                            .then(function (res) {
-                                resolve('Asset created')
-                            })
-                            .catch(function (err) {
-                                reject('StellarBurrito_TX_ERR payment error, check keys\n\r' + err)
-                            })
+                        resolve('Asset created')
                     })
                     .catch(function (err) {
-                        console.log(err)
-                        reject('StellarBurrito_TX_ERR trust_op error\n\r' + err)
+                        reject('StellarBurrito_TX_ERR payment error, check keys\n\r' + err)
                     })
+            })
+            .catch(function (err) {
+                console.log(err)
+                reject('StellarBurrito_TX_ERR trust_op error\n\r' + err)
             })
     })
 }

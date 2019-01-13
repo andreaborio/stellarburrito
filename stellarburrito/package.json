@@ -30,9 +30,9 @@
   "deprecated": false,
   "description": "Stellar JS SDK wrapper, Make stellar simple!",
   "directories": {
-    "lib": "lib"
+    "test": "test"
   },
-  "homepage": "https://github.com/andreaborio/stellarburrito#readme",
+  "homepage": "https://www.winetrack.it/stellarburrito",
   "keywords": [
     "stellar",
     "js",
@@ -51,5 +51,5 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "1.0.2"
+  "version": "0.0.5"
 }

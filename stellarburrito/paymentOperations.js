@@ -12,72 +12,69 @@
  */
 async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'native', memoType = 'text', memo = 'def') {
     return new Promise((resolve, reject) => {
-        var global = require('./global')
         let config = require('./config')
+        let server
         let env = config.env
-        global.init()
-            .then(function (global) {
-                let server, StellarSdk
-                if (typeof env != 'undefined' && env === "testnet") {
-                    server = Object.assign(Object.create(Object.getPrototypeOf(global.test.server)), global.test.server)
-                    StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.test.StellarSdk)), global.test.StellarSdk)
-                } else {
-                    server = Object.assign(Object.create(Object.getPrototypeOf(global.pub.server)), global.pub.server)
-                    StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.pub.StellarSdk)), global.pub.StellarSdk)
-                }
-                let memoFinal, asset;
-                switch (memoType) {
-                    case 'text':
-                        memoFinal = StellarSdk.Memo.text(memo)
-                        break;
-                    case 'id':
-                        memoFinal = StellarSdk.Memo.id(memo)
-                        break;
-                    case 'return':
-                        memoFinal = StellarSdk.Memo.return(memo)
-                        break;
-                    default:
-                        reject('StellarBurrito_FORMAT_ERR Invalid memo type')
-                        break;
-                }
+        let StellarSdk = require('stellar-sdk')
+        if (typeof env != 'undefined' && env === "testnet") {
+            StellarSdk.Network.useTestNetwork()
+            server = new StellarSdk.Server(config.testnet_horizon)
+        } else {
+            StellarSdk.Network.usePublicNetwork()
+            server = new StellarSdk.Server(config.pubnet_horizon)
+        }
+        let memoFinal, asset;
+        switch (memoType) {
+            case 'text':
+                memoFinal = StellarSdk.Memo.text(memo)
+                break;
+            case 'id':
+                memoFinal = StellarSdk.Memo.id(memo)
+                break;
+            case 'return':
+                memoFinal = StellarSdk.Memo.return(memo)
+                break;
+            default:
+                reject('StellarBurrito_FORMAT_ERR Invalid memo type')
+                break;
+        }
 
-                if (issuer == "native" && assetCode == "native")
-                    asset = new StellarSdk.Asset.native()
-                else
-                    asset = new StellarSdk.Asset(assetCode, issuer)
-                let des = StellarSdk.Keypair.fromSecret(sender)
-                server.loadAccount(des.publicKey())
-                    .then(function (sourceAccount) {
-                        let builder = new StellarSdk.TransactionBuilder(sourceAccount)
-                        if (typeof receiver == "string")
-                            builder.addOperation(StellarSdk.Operation.payment({
-                                destination: receiver,
-                                asset,
-                                amount
-                            }))
-                        else {
-                            for (var w = 0; w < receiver.length; w++) {
-                                builder.addOperation(StellarSdk.Operation.payment({
-                                    destination: receiver[w],
-                                    asset,
-                                    amount
-                                }))
-                            }
-                        }
-                        builder.addMemo(memoFinal)
-                        let transaction = builder.build()
-                        transaction.sign(des)
-                        server.submitTransaction(transaction)
-                            .then(function (result) {
-                                resolve(result)
-                            })
-                            .catch(function (error) {
-                                reject('StellarBurrito_TX_ERR ' + error)
-                            })
+        if (issuer == "native" && assetCode == "native")
+            asset = new StellarSdk.Asset.native()
+        else
+            asset = new StellarSdk.Asset(assetCode, issuer)
+        let des = StellarSdk.Keypair.fromSecret(sender)
+        server.loadAccount(des.publicKey())
+            .then(function (sourceAccount) {
+                let builder = new StellarSdk.TransactionBuilder(sourceAccount)
+                if (typeof receiver == "string")
+                    builder.addOperation(StellarSdk.Operation.payment({
+                        destination: receiver,
+                        asset,
+                        amount
+                    }))
+                else {
+                    for (var w = 0; w < receiver.length; w++) {
+                        builder.addOperation(StellarSdk.Operation.payment({
+                            destination: receiver[w],
+                            asset,
+                            amount
+                        }))
+                    }
+                }
+                builder.addMemo(memoFinal)
+                let transaction = builder.build()
+                transaction.sign(des)
+                server.submitTransaction(transaction)
+                    .then(function (result) {
+                        resolve(result)
                     })
-                    .catch(StellarSdk.NotFoundError, function (error) {
-                        reject('StellarBurrito_KEY_ERR The sender account for payment_op doesn\'t exists.')
+                    .catch(function (error) {
+                        reject('StellarBurrito_TX_ERR ' + error)
                     })
+            })
+            .catch(StellarSdk.NotFoundError, function (error) {
+                reject('StellarBurrito_KEY_ERR The sender account for payment_op doesn\'t exists.')
             })
     })
 }

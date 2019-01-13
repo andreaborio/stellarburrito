@@ -16,39 +16,56 @@
  * @param {string} trustLimit - The amount of coin that you want to trust from this issuer
  */
 
-async function createAccount(privKey, memoTypeCreate = 'test', memoCreate = 'default', startingBalance = '1.501', memoTypeTrust = 'text', memoTrust = 'default', issuer = 'unsetted', assetCode = 'unsetted', trustLimit = 'unsetted') {
+async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'default', startingBalance = '1.501', memoTypeTrust = 'text', memoTrust = 'default', issuer = 'unsetted', assetCode = 'unsetted', trustLimit = 'unsetted') {
   return new Promise((resolve, reject) => {
-    let global = require('../settings/global')
-    let config = require('../settings/config')
-    global.init()
-      .then(function (global) {
-        let server, StellarSdk
-        let env = config.env
-        if (typeof env != 'undefined' && env === "testnet") {
-          server = Object.assign(Object.create(Object.getPrototypeOf(global.test.server)), global.test.server)
-          StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.test.StellarSdk)), global.test.StellarSdk)
-        } else {
-          server = Object.assign(Object.create(Object.getPrototypeOf(global.pub.server)), global.pub.server)
-          StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.pub.StellarSdk)), global.pub.StellarSdk)
-        }
-        let memoFinalCreate
-        switch (memoTypeCreate) {
-          case 'text':
-            memoFinalCreate = StellarSdk.Memo.text(memoCreate)
-            break;
-          case 'id':
-            memoFinalCreate = StellarSdk.Memo.id(memoCreate)
-            break;
-          case 'return':
-            memoFinalCreate = StellarSdk.Memo.return(memoCreate)
-            break;
-          default:
-            reject('invalid memo type')
-            break;
-        }
-        let des = StellarSdk.Keypair.fromSecret(privKey)
-        let newAccount = StellarSdk.Keypair.random()
-        server.loadAccount(des.publicKey())
+    let config = require('./config')
+    let server
+    let env = config.env
+    let StellarSdk = require('stellar-sdk')
+    if (typeof env != 'undefined' && env === "testnet") {
+      server = new StellarSdk.Server(config.testnet_horizon)
+      StellarSdk.Network.useTestNetwork()
+    } else {
+      server = new StellarSdk.Server(config.pubnet_horizon)
+      StellarSdk.Network.usePublicNetwork()
+    }
+    let memoFinalCreate
+    switch (memoTypeCreate) {
+      case 'text':
+        memoFinalCreate = StellarSdk.Memo.text(memoCreate)
+        break;
+      case 'id':
+        memoFinalCreate = StellarSdk.Memo.id(memoCreate)
+        break;
+      case 'return':
+        memoFinalCreate = StellarSdk.Memo.return(memoCreate)
+        break;
+      default:
+        reject('invalid memo type')
+        break;
+    }
+    let des = StellarSdk.Keypair.fromSecret(privKey)
+    let newAccount = StellarSdk.Keypair.random()
+    server.loadAccount(des.publicKey())
+      .catch(StellarSdk.NotFoundError, function (error) {
+        reject({
+          message: 'The creator account for doesn\'t exists.',
+          errCode: 404
+        });
+      })
+      .then(function (sourceAccount) {
+        transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+          .addOperation(StellarSdk.Operation.createAccount({
+            destination: newAccount.publicKey(), //chiave pubblica appena generata  più in alto con il metodo keypar.random()
+            startingBalance // base reserve 2 + 1 per effettuare circa 100k operazioni
+          }))
+          .addMemo(memoFinalCreate)
+          .build();
+        transaction.sign(des);
+        return server.submitTransaction(transaction)
+      })
+      .then(function (result) {
+        server.loadAccount(newAccount.publicKey())
           .catch(StellarSdk.NotFoundError, function (error) {
             reject({
               message: 'The creator account for doesn\'t exists.',
@@ -56,48 +73,28 @@ async function createAccount(privKey, memoTypeCreate = 'test', memoCreate = 'def
             });
           })
           .then(function (sourceAccount) {
-            transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-              .addOperation(StellarSdk.Operation.createAccount({
-                destination: newAccount.publicKey(), //chiave pubblica appena generata  più in alto con il metodo keypar.random()
-                startingBalance // base reserve 2 + 1 per effettuare circa 100k operazioni
-              }))
-              .addMemo(memoFinalCreate)
-              .build();
-            transaction.sign(des);
-            return server.submitTransaction(transaction)
-          })
-          .then(function (result) {
-            server.loadAccount(newAccount.publicKey())
-              .catch(StellarSdk.NotFoundError, function (error) {
-                reject({
-                  message: 'The creator account for doesn\'t exists.',
-                  errCode: 404
-                });
+            if (assetCode === 'unsetted') {
+              resolve({
+                "publicKey": newAccount.publicKey(),
+                "privateKey": newAccount.secret()
               })
-              .then(function (sourceAccount) {
-                if (typeof memoTypeTrust === 'unsetted') {
-                  resolve({
-                    "publicKey": newAccount.publicKey(),
-                    "privateKey": newAccount.secret()
-                  })
-                }
-                changeTrust(newAccount.secret(), issuer, assetCode, trustLimit, memoTypeTrust, memoTrust)
-                  .then(function (result) {
-                    resolve({
-                      "publicKey": newAccount.publicKey(),
-                      "privateKey": newAccount.secret()
-                    })
-                  })
-                  .catch(function (error) {
-                    reject('Tx error_' + error)
-                  })
+            }
+            changeTrust(newAccount.secret(), issuer, assetCode, trustLimit, memoTypeTrust, memoTrust)
+              .then(function (result) {
+                resolve({
+                  "publicKey": newAccount.publicKey(),
+                  "privateKey": newAccount.secret()
+                })
               })
               .catch(function (error) {
                 reject('Tx error_' + error)
               })
-
-
           })
+          .catch(function (error) {
+            reject('Tx error_' + error)
+          })
+
+
       })
   })
 }
@@ -117,60 +114,57 @@ async function createAccount(privKey, memoTypeCreate = 'test', memoCreate = 'def
 
 async function changeTrust(privKey, issuer, assetCode, trustLimit, memoType = 'text', memo = 'default') {
   return new Promise((resolve, reject) => {
-    var global = require('./global')
-    var config = require('./config')
+    let config = require('./config')
+    let server
     let env = config.env
-    global.init()
-      .then(function (global) {
-        let server, StellarSdk
-        if (typeof env != 'undefined' && env === "testnet") {
-          server = Object.assign(Object.create(Object.getPrototypeOf(global.test.server)), global.test.server)
-          StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.test.StellarSdk)), global.test.StellarSdk)
-        } else {
-          server = Object.assign(Object.create(Object.getPrototypeOf(global.pub.server)), global.pub.server)
-          StellarSdk = Object.assign(Object.create(Object.getPrototypeOf(global.pub.StellarSdk)), global.pub.StellarSdk)
-        }
-        var memoFinal;
-        switch (memoType) {
-          case 'text':
-            memoFinal = StellarSdk.Memo.text(memo)
-            break;
-          case 'id':
-            memoFinal = StellarSdk.Memo.id(memo)
-            break;
-          case 'return':
-            memoFinal = StellarSdk.Memo.return(memo)
-            break;
-          default:
-            reject('StellarBurrito_FORMAT_ERR Invalid memo type')
-            break;
-        }
-        let des = StellarSdk.Keypair.fromSecret(privKey)
-        server.loadAccount(des.publicKey())
-          .catch(StellarSdk.NotFoundError, function (error) {
-            reject('StellarBurrito_KEY_ERR The destination account for change_trust_op doesn\'t exists.', );
-          })
-          .then(function (sourceAccount) {
-            let asset = new StellarSdk.Asset(assetCode, issuer)
-            transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-              .addOperation(StellarSdk.Operation.changeTrust({
-                asset: asset,
-                limit: trustLimit
-              }))
-              .addMemo(memoFinal)
-              .build();
-            transaction.sign(des);
-            return server.submitTransaction(transaction)
-          })
-          .then(function (result) {
-            resolve(result)
-          })
-          .catch(function (error) {
-            reject('StellarBurrito_TX_ERR' + error)
-          })
-
-
+    let StellarSdk = require('stellar-sdk')
+    if (typeof env != 'undefined' && env === "testnet") {
+      server = new StellarSdk.Server(config.testnet_horizon)
+      StellarSdk.Network.useTestNetwork()
+    } else {
+      server = new StellarSdk.Server(config.pubnet_horizon)
+      StellarSdk.Network.usePublicNetwork()
+    }
+    var memoFinal;
+    switch (memoType) {
+      case 'text':
+        memoFinal = StellarSdk.Memo.text(memo)
+        break;
+      case 'id':
+        memoFinal = StellarSdk.Memo.id(memo)
+        break;
+      case 'return':
+        memoFinal = StellarSdk.Memo.return(memo)
+        break;
+      default:
+        reject('StellarBurrito_FORMAT_ERR Invalid memo type')
+        break;
+    }
+    let des = StellarSdk.Keypair.fromSecret(privKey)
+    server.loadAccount(des.publicKey())
+      .catch(StellarSdk.NotFoundError, function (error) {
+        reject('StellarBurrito_KEY_ERR The destination account for change_trust_op doesn\'t exists.', );
       })
+      .then(function (sourceAccount) {
+        let asset = new StellarSdk.Asset(assetCode, issuer)
+        transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+          .addOperation(StellarSdk.Operation.changeTrust({
+            asset: asset,
+            limit: trustLimit
+          }))
+          .addMemo(memoFinal)
+          .build();
+        transaction.sign(des);
+        return server.submitTransaction(transaction)
+      })
+      .then(function (result) {
+        resolve(result)
+      })
+      .catch(function (error) {
+        reject('StellarBurrito_TX_ERR' + error)
+      })
+
+
   })
 }
 
