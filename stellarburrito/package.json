@@ -41,7 +41,7 @@
     "blockchain",
     "nodejs"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "main": "StellarBurrito.js",
   "name": "stellarburrito",
   "repository": {
@@ -51,8 +51,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "0.0.6",
- "dependencies": {
+  "version": "0.0.9",
+  "dependencies": {
     "stellar-sdk": "latest"
   }
 }
