@@ -55,7 +55,7 @@ function random() {
     })
     step('paymentOperations', function () {
         describe('Pay from alice to bob', () => {
-            it('assetOperations.createAsset', (done) => {
+            it('paymentOperations.Pay', (done) => {
                 const resolvingPromise = paymentOperations.Pay(alice.secret(), bob.publicKey(),'0.0000001')
                 resolvingPromise.then((result) => {
                     expect(1).to.equal(1);
