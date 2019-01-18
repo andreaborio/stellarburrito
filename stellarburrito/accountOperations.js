@@ -50,11 +50,11 @@ async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'def
       .catch(StellarSdk.NotFoundError, function (error) {
         reject({
           message: 'The creator account for doesn\'t exists.',
-          errCode: 404
+          error
         });
       })
       .then(function (sourceAccount) {
-        transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
           .addOperation(StellarSdk.Operation.createAccount({
             destination: newAccount.publicKey(), //chiave pubblica appena generata  più in alto con il metodo keypar.random()
             startingBalance // base reserve 2 + 1 per effettuare circa 100k operazioni
@@ -69,7 +69,7 @@ async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'def
           .catch(StellarSdk.NotFoundError, function (error) {
             reject({
               message: 'The creator account for doesn\'t exists.',
-              errCode: 404
+              error
             });
           })
           .then(function (sourceAccount) {
@@ -143,11 +143,14 @@ async function changeTrust(privKey, issuer, assetCode, trustLimit, memoType = 't
     let des = StellarSdk.Keypair.fromSecret(privKey)
     server.loadAccount(des.publicKey())
       .catch(StellarSdk.NotFoundError, function (error) {
-        reject('StellarBurrito_KEY_ERR The destination account for change_trust_op doesn\'t exists.', );
+        reject({
+          message: 'StellarBurrito_KEY_ERR The destination account for change_trust_op doesn\'t exists.',
+          error
+        });
       })
       .then(function (sourceAccount) {
         let asset = new StellarSdk.Asset(assetCode, issuer)
-        transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
           .addOperation(StellarSdk.Operation.changeTrust({
             asset: asset,
             limit: trustLimit

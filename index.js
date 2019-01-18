@@ -1,25 +1,55 @@
-var ao=require( './stellarburrito/accountOperations.js')
-var pay=require('./stellarburrito/paymentOperations.js')
-var assetop=require('./stellarburrito/assetOperations.js')
-let dest=['GDZKL2BWHMGBDBPPHZGQ4RQNQBT52U266BM6TODZLWAUNNIWC43ZODJQ','GB7LEV7ZBSRW5WEJ5NYCDAHK3VFH2QKP5SBZEV3SQNCVFX7TKSET2GDV']
-let distributor='SCNIYIP6WLTJYOXBQVAWQQJMYIXIIAGFKEJDAZPY4T5FUZL2OODV5PNR'
-let issuer='SCYTGAZEMS4Y3EUX2DBAKQPVX6AK4N6OMIKJQXYCRFC573DAECWLFYYY'
-let hi=require('./stellarburrito/history.js')
-let le=require('./stellarburrito/ledger.js')
-let oo=require('./stellarburrito/offerOperations')
+var ao = require('./stellarburrito/accountOperations.js')
+var pay = require('./stellarburrito/paymentOperations.js')
+var assetop = require('./stellarburrito/assetOperations.js')
+let dest = ['GDZKL2BWHMGBDBPPHZGQ4RQNQBT52U266BM6TODZLWAUNNIWC43ZODJQ', 'GB7LEV7ZBSRW5WEJ5NYCDAHK3VFH2QKP5SBZEV3SQNCVFX7TKSET2GDV']
+let distributor = 'SCNIYIP6WLTJYOXBQVAWQQJMYIXIIAGFKEJDAZPY4T5FUZL2OODV5PNR'
+let issuer = 'SCYTGAZEMS4Y3EUX2DBAKQPVX6AK4N6OMIKJQXYCRFC573DAECWLFYYY'
+let hi = require('./stellarburrito/history.js')
+let le = require('./stellarburrito/ledger.js')
+let oo = require('./stellarburrito/offerOperations')
+let as = require('./stellarburrito/accountStatus')
 /*var aus=issuer
 issuer=source
 source=aus*/
-let sb=require('./stellarburrito/StellarBurrito')
+let sb = require('./stellarburrito/StellarBurrito')
 
-let distributorPair=sb.StellarSdk.Keypair.fromSecret(distributor)
-let issuerPair=sb.StellarSdk.Keypair.fromSecret(issuer)
-console.log(distributorPair.publicKey()+ '    '+issuerPair.publicKey())
-oo.manageOffer(distributorPair.secret(),'n5',issuerPair.publicKey(),'2',{'d':100,'n':1},'0','tesfinale',issuerPair.publicKey())
+let distributorPair = sb.StellarSdk.Keypair.fromSecret(distributor)
+let issuerPair = sb.StellarSdk.Keypair.fromSecret(issuer)
+
+/*as.getAccount(issuerPair.publicKey())
+    .then(function (sku) {
+        console.log(sku)*/
+        as.getBalances(distributorPair.publicKey())
+            .then(skul =>{
+                console.log(skul)
+            })
+            as.getSigners(distributorPair.publicKey())
+            .then(skul =>{
+                console.log(JSON.stringify(skul))
+            })
+            as.getFlags(distributorPair.publicKey())
+            .then(skul =>{
+                console.log(JSON.stringify(skul))
+            })
+        as.getThresholds(distributorPair.publicKey())
+        .then(skul =>{
+        console.log(skul)
+        })
+    .catch(error =>  {
+        console.log(error)
+    })
+/*
+oo.createPassiveOffer(distributorPair.secret(),'n5',issuerPair.publicKey(),'2',{'d':1000000,'n':1},'0','n2',issuerPair.publicKey())
+.then(function(sku)
+{
+    console.log(sku)
+    oo.manageOffer(distributorPair.secret(),'n5',issuerPair.publicKey(),'1',{'d':1,'n':1},'0','n2',issuerPair.publicKey())
 .then(function(sku)
 {
     console.log(sku)
 })
+})
+*/
 
 /*
 hi.paymentsHistory('GCLNXIEAVJLQRIUOAE44IV5TFHHVS6Z6K45J43FJ2SWBKH2DUJO2QA6S',50)
