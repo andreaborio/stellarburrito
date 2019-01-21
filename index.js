@@ -31,6 +31,14 @@ let issuerPair = sb.StellarSdk.Keypair.fromSecret(issuer)
             .then(skul =>{
                 console.log(JSON.stringify(skul))
             })
+            as.getInflationDestination(distributorPair.publicKey())
+            .then(skul =>{
+                console.log(JSON.stringify(skul))
+            })
+            as.getInflationDestination(distributorPair.publicKey())
+            .then(skul =>{
+                console.log(JSON.stringify(skul))
+            })
         as.getThresholds(distributorPair.publicKey())
         .then(skul =>{
         console.log(skul)

@@ -112,10 +112,36 @@ async function getFlags(pubKey) {
 
 	})
 }
+async function getInflationDestination(pubKey) {
+	return new Promise((resolve, reject) => {
+		getAccount(pubKey)
+			.then(page => {
+				resolve(page.inflation_destination)
+			})
+			.catch(function (error) {
+				reject(error)
+			})
+
+	})
+}
+async function getHomeDomain(pubKey) {
+	return new Promise((resolve, reject) => {
+		getAccount(pubKey)
+			.then(page => {
+				resolve(page.home_domain)
+			})
+			.catch(function (error) {
+				reject(error)
+			})
+
+	})
+}
 module.exports = {
 	getAccount,
 	getBalances,
 	getThresholds,
 	getSigners,
-	getFlags
+	getFlags,
+	getInflationDestination,
+	getHomeDomain
 }

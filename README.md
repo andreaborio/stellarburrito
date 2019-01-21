@@ -1,5 +1,7 @@
 # Stellar Burrito  
 ## A simple wrapper for stellar-sdk  
+![Test](https://raw.githubusercontent.com/andreaborio/stellarburrito/master/test/badge.svg?sanitize=true)
+
 [Docs Here](https://www.winetrack.it/stellarburrito/)  
 Donations : GD36QCLDAJKTP7YDBYSQV7VVEVUGARS4LNCJR3DNXC3C2CLWSPYC4QWF  
 ### Tutorials  
