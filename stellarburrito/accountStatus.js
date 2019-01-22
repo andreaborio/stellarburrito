@@ -1,6 +1,6 @@
 /**
  * getAccount
- * retrive account infos from horizon
+ * retrive account from horizon
  * @param {string} pubKey - The publicKey of the account
  */
 async function getAccount(pubKey) {

@@ -19,33 +19,14 @@ let issuerPair = sb.StellarSdk.Keypair.fromSecret(issuer)
 /*as.getAccount(issuerPair.publicKey())
     .then(function (sku) {
         console.log(sku)*/
-        as.getBalances(distributorPair.publicKey())
-            .then(skul =>{
-                console.log(skul)
-            })
-            as.getSigners(distributorPair.publicKey())
-            .then(skul =>{
-                console.log(JSON.stringify(skul))
-            })
-            as.getFlags(distributorPair.publicKey())
-            .then(skul =>{
-                console.log(JSON.stringify(skul))
-            })
-            as.getInflationDestination(distributorPair.publicKey())
-            .then(skul =>{
-                console.log(JSON.stringify(skul))
-            })
-            as.getInflationDestination(distributorPair.publicKey())
-            .then(skul =>{
-                console.log(JSON.stringify(skul))
-            })
-        as.getThresholds(distributorPair.publicKey())
-        .then(skul =>{
-        console.log(skul)
-        })
-    .catch(error =>  {
-        console.log(error)
-    })
+        async function f1() {
+   let keypair =  await ao.createAccount(issuer)
+   console.log(keypair)
+   result=await ao.manageData(keypair.privateKey,"tejjjjjjjjjjjjjjjjjjkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkjjjjjjjjst","tessssstttjakajsdkajdakjsksdajkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+   console.log(result)
+   console.log(distributorPair.publicKey())
+        }
+        f1()
 /*
 oo.createPassiveOffer(distributorPair.secret(),'n5',issuerPair.publicKey(),'2',{'d':1000000,'n':1},'0','n2',issuerPair.publicKey())
 .then(function(sku)

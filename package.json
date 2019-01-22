@@ -1,12 +1,12 @@
 {
   "name": "stellarlibs",
   "version": "1.0.0",
-  "description": "",
+  "description": "![Test](https://raw.githubusercontent.com/andreaborio/stellarburrito/master/test/badge.svg?sanitize=true)",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Andrea Borio",
   "license": "ISC",
   "dependencies": {
     "chai": "^4.2.0",
@@ -19,12 +19,22 @@
   },
   "script": {
     "generate-docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose",
-        "test": "MOCHA_BADGE_GEN_FORMAT=png MOCHA_BADGE_GEN_OUTPUT=badge.png mocha --reporter mocha-badge-generator"
-
+    "test": "MOCHA_BADGE_GEN_FORMAT=png MOCHA_BADGE_GEN_OUTPUT=badge.png mocha --reporter mocha-badge-generator"
   },
   "devDependencies": {
     "jest": "^23.6.0",
     "mocha-badge-generator": "^0.2.2",
     "mocha-steps": "^1.3.0"
-  }
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreaborio/stellarburrito.git"
+  },
+  "bugs": {
+    "url": "https://github.com/andreaborio/stellarburrito/issues"
+  },
+  "homepage": "https://github.com/andreaborio/stellarburrito#readme"
 }

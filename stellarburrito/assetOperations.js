@@ -1,3 +1,6 @@
+/* eslint-disable new-cap */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-param-reassign */
 /**
  * Create asset
  * Sender pays receiver an amount of coin.
@@ -18,21 +21,18 @@ async function createAsset(issuer, distributor, amount, assetCode, memoTypeTrust
         let accountop = require('./accountOperations')
         let paymentop = require('./paymentOperations')
         let config = require('./config')
-        let server
         let env = config.env
         let StellarSdk = require('stellar-sdk')
         if (typeof env != 'undefined' && env === "testnet") {
-            server = new StellarSdk.Server(config.testnet_horizon)
             StellarSdk.Network.useTestNetwork()
         } else {
-            server = new StellarSdk.Server(config.pubnet_horizon)
             StellarSdk.Network.usePublicNetwork()
         }
         issuer = StellarSdk.Keypair.fromSecret(issuer)
         distributor = StellarSdk.Keypair.fromSecret(distributor)
-        accountop.changeTrust(distributor.secret(), issuer.publicKey(), assetCode, amount)
+        accountop.changeTrust(distributor.secret(), issuer.publicKey(), assetCode, amount, memoTypeTrust, memoTrust)
             .then(function (res) {
-                paymentop.Pay(issuer.secret(), distributor.publicKey(), amount, assetCode, issuer.publicKey())
+                paymentop.Pay(issuer.secret(), distributor.publicKey(), amount, assetCode, issuer.publicKey(), memoTypePay, memoPay)
                     .then(function (res) {
                         resolve('Asset created')
                     })
@@ -41,7 +41,6 @@ async function createAsset(issuer, distributor, amount, assetCode, memoTypeTrust
                     })
             })
             .catch(function (err) {
-                console.log(err)
                 reject('StellarBurrito_TX_ERR trust_op error\n\r' + err)
             })
     })

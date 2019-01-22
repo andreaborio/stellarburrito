@@ -1,9 +1,15 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable prefer-reflect */
+/* eslint-disable id-length */
+/* eslint-disable no-magic-numbers */
+/* eslint-disable no-tabs */
 /**
  * getLedgers
  * retrive ledgers from horizon    
  * @param {number} limit - Max limit of transactions that you want
  * @param {string} order - The order of the results ASC DESC
  * @param {string} cursor - The cursor for querying payments 
+ * @return {JSON} result - Ledgers json
  */
 async function getLedgers(limit = 10, order = 'desc', cursor = 'now') {
 	return new Promise((resolve, reject) => {

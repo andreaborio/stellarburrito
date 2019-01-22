@@ -84,7 +84,7 @@
       
     
 
-    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li></ul>
+    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li></ul>
   </nav>
 
   <div id="main">
@@ -99,12 +99,18 @@
 
 <section>
   <article>
-    <pre class="prettyprint source linenums"><code>/**
+    <pre class="prettyprint source linenums"><code>/* eslint-disable no-plusplus */
+/* eslint-disable prefer-reflect */
+/* eslint-disable id-length */
+/* eslint-disable no-magic-numbers */
+/* eslint-disable no-tabs */
+/**
  * getLedgers
  * retrive ledgers from horizon    
  * @param {number} limit - Max limit of transactions that you want
  * @param {string} order - The order of the results ASC DESC
  * @param {string} cursor - The cursor for querying payments 
+ * @return {JSON} result - Ledgers json
  */
 async function getLedgers(limit = 10, order = 'desc', cursor = 'now') {
 	return new Promise((resolve, reject) => {
