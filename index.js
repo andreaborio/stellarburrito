@@ -20,9 +20,12 @@ let issuerPair = sb.StellarSdk.Keypair.fromSecret(issuer)
     .then(function (sku) {
         console.log(sku)*/
         async function f1() {
-   let keypair =  await ao.createAccount(issuer)
-   console.log(keypair)
-   result=await ao.manageData(keypair.privateKey,"tejjjjjjjjjjjjjjjjjjkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkjjjjjjjjst","tessssstttjakajsdkajdakjsksdajkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+  /* let keypair =  await ao.createAccount(issuer)
+   console.log(keypair)*/
+    let result=await as.getData('GA2I2ZEZMJOD62FQXD2NJ7AJTZYR6MXB4SEIBS2QUAFHWVPFS63JCQEC')
+   console.log(JSON.stringify(result))
+
+   result=await ao.manageData('SD5MYQQTPOJHSTRFEBHQJGL7TI7CWBBMVP4SZ2ZFPH7FT4AHQA5CKIA6',"test","ttkkkkk")
    console.log(result)
    console.log(distributorPair.publicKey())
         }

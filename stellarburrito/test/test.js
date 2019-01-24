@@ -1,4 +1,5 @@
 const accountOperations = require('../accountOperations')
+const accountStatus = require('../accountStatus')
 const assetOperations = require('../assetOperations')
 const paymentOperations = require('../paymentOperations')
 const offerOperations = require('../offerOperations')
@@ -13,6 +14,10 @@ let accountTrust = 'SDUSO5W2WU2FEMRKAGXFMZUEJ4RYCCKZYE2UADVRU4APLIVGV5K5Y5LC'
 let alice = StellarSdk.Keypair.fromSecret(accountTrust)
 let accountDistributor = config.testaccount
 let bob = StellarSdk.Keypair.fromSecret(accountDistributor)
+let distributor = 'SCNIYIP6WLTJYOXBQVAWQQJMYIXIIAGFKEJDAZPY4T5FUZL2OODV5PNR'
+let issuer = 'SCYTGAZEMS4Y3EUX2DBAKQPVX6AK4N6OMIKJQXYCRFC573DAECWLFYYY'
+let distributorPair = StellarSdk.Keypair.fromSecret(distributor)
+let issuerPair = StellarSdk.Keypair.fromSecret(issuer)
 function random() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -86,15 +91,114 @@ step('ledger', function () {
             })
         }).timeout(15000)
     })
-})/*
+})
 step('offerOperations', function () {
     describe('Create Passive Offer', () => {
         it('offerOperations.createPassiveOffer', (done) => {
-            const resolvingPromise = offerOperations.createPassiveOffer(alice.secret)
+            const resolvingPromise = offerOperations.createPassiveOffer(distributorPair.secret(),'n5',issuerPair.publicKey(),'2',{'d':1000000,'n':1},'0','n2',issuerPair.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
             })
         }).timeout(15000)
     })
-})*/
+})
+step('offerOperations', function () {
+    describe('Manage Offer', () => {
+        it('offerOperations.createPassiveOffer', (done) => {
+            const resolvingPromise = offerOperations.manageOffer(distributorPair.secret(),'n5',issuerPair.publicKey(),'2',{'d':1000000,'n':1},'0','n2',issuerPair.publicKey())
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+        }).timeout(15000)
+    })
+})
+step('account Status', function () {
+    describe('Get Account', () => {
+        it('accountStatus.getAccount', (done) => {
+            const resolvingPromise = accountStatus.getAccount(alice.publicKey())
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+        }).timeout(15000)
+    })
+})
+step('account Status', function () {
+    describe('Get Balances', () => {
+        it('accountStatus.getBalances', (done) => {
+            const resolvingPromise = accountStatus.getBalances(alice.publicKey())
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+        }).timeout(15000)
+    })
+})
+step('account Status', function () {
+    describe('Get Data', () => {
+        it('accountStatus.getData', (done) => {
+            const resolvingPromise = accountStatus.getData(alice.publicKey())
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+        }).timeout(15000)
+    })
+})
+step('account Status', function () {
+    describe('Get Flags', () => {
+        it('accountStatus.getFlags', (done) => {
+            const resolvingPromise = accountStatus.getFlags(alice.publicKey())
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+        }).timeout(15000)
+    })
+})
+step('account Status', function () {
+    describe('Get Home Domain', () => {
+        it('accountStatus.getHomeDomain', (done) => {
+            const resolvingPromise = accountStatus.getHomeDomain(alice.publicKey())
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+        }).timeout(15000)
+    })
+})
+step('account Status', function () {
+    describe('Get Inflation Destination', () => {
+        it('accountStatus.getInflationDestination', (done) => {
+            const resolvingPromise = accountStatus.getInflationDestination(alice.publicKey())
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+        }).timeout(15000)
+    })
+})
+step('account Status', function () {
+    describe('Get Signers ', () => {
+        it('accountStatus.getInflationDestination', (done) => {
+            const resolvingPromise = accountStatus.getSigners(alice.publicKey())
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+        }).timeout(15000)
+    })
+})
+step('account Status', function () {
+    describe('Get Thresholds ', () => {
+        it('accountStatus.getThresholds', (done) => {
+            const resolvingPromise = accountStatus.getThresholds(alice.publicKey())
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+        }).timeout(15000)
+    })
+})

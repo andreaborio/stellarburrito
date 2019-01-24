@@ -50,20 +50,15 @@ async function getBalances(pubKey) {
 	})
 }
 /**
- * getBalances
- * retrive account balances from horizon
+ * getData
+ * retrive account data from horizon
  * @param {string} pubKey - The publicKey of the account
  */
-async function getBalances(pubKey) {
+async function getData(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
 			.then(page => {
-				let balances = {
-					balances: []
-				}
-				for (let i = 0; i < page.balances.length; i++)
-					balances.balances.push(page.balances[i])
-				resolve(balances)
+				resolve(page.data_attr)
 			})
 			.catch(function (error) {
 				reject(error)
@@ -143,5 +138,6 @@ module.exports = {
 	getSigners,
 	getFlags,
 	getInflationDestination,
-	getHomeDomain
+	getHomeDomain,
+	getData
 }
