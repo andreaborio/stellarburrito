@@ -17,56 +17,256 @@
  * @param {string} trustLimit - The amount of coin that you want to trust from this issuer
  */
 
-async function setInlationDestination(privKey, memoTypeCreate = 'text', memoCreate = 'default', startingBalance = '1.501', memoTypeTrust = 'text', memoTrust = 'default', issuer = 'unsetted', assetCode = 'unsetted', trustLimit = 'unsetted') {
-    return new Promise((resolve, reject) => {
-      let config = require('./config')
-      let server
-      let env = config.env
-      let StellarSdk = require('stellar-sdk')
-      if (typeof env != 'undefined' && env === "testnet") {
-        server = new StellarSdk.Server(config.testnet_horizon)
-        StellarSdk.Network.useTestNetwork()
-      } else {
-        server = new StellarSdk.Server(config.pubnet_horizon)
-        StellarSdk.Network.usePublicNetwork()
-      }
-      let des = StellarSdk.Keypair.fromSecret(privKey)
-      let newAccount = StellarSdk.Keypair.random()
-      server.loadAccount(des.publicKey())
-        .catch(StellarSdk.NotFoundError, function (error) {
-          reject({
-            message: 'The creator account for doesn\'t exists.',
-            error
-          });
-        })
-        .then(function (sourceAccount) {
-          let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-            .addOperation(StellarSdk.Operation.createAccount({
-              destination: newAccount.publicKey(), //chiave pubblica appena generata  più in alto con il metodo keypar.random()
-              startingBalance // base reserve 2 + 1 per effettuare circa 100k operazioni
-            }))
-            .addMemo(memoFinalCreate)
-            .build();
-          transaction.sign(des);
-          return server.submitTransaction(transaction)
-        })
-        .then(function (result) {
-         
-                  resolve(result)
-                    
-            })
-            .catch(function (error) {
-              reject('Tx error_' + error)
-            })
-  
-  
-        })
+async function setInlationDestination(privKey, inflationDest) {
+  return new Promise((resolve, reject) => {
+    let config = require('./config')
+    let server
+    let env = config.env
+    let StellarSdk = require('stellar-sdk')
+    if (typeof env != 'undefined' && env === "testnet") {
+      server = new StellarSdk.Server(config.testnet_horizon)
+      StellarSdk.Network.useTestNetwork()
+    } else {
+      server = new StellarSdk.Server(config.pubnet_horizon)
+      StellarSdk.Network.usePublicNetwork()
     }
-  
+    let des = StellarSdk.Keypair.fromSecret(privKey)
+    server.loadAccount(des.publicKey())
+      .catch(StellarSdk.NotFoundError, function (error) {
+        reject({
+          message: 'The creator account for doesn\'t exists.',
+          error
+        });
+      })
+      .then(function (sourceAccount) {
+        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+          .addOperation(StellarSdk.Operation.setOptions({
+            inflationDest
+          }))
+          .build();
+        transaction.sign(des);
+        return server.submitTransaction(transaction)
+      })
+      .then(function (result) {
 
-  module.exports = {
-    createAccount,
-    changeTrust,
-    mergeAccount,
-    manageData
-  }
+        resolve(result)
+
+      })
+      .catch(function (error) {
+        reject('Tx error_' + error)
+      })
+  })
+}
+
+async function setHomeDomain(privKey, homeDomain) {
+  return new Promise((resolve, reject) => {
+    let config = require('./config')
+    let server
+    let env = config.env
+    let StellarSdk = require('stellar-sdk')
+    if (typeof env != 'undefined' && env === "testnet") {
+      server = new StellarSdk.Server(config.testnet_horizon)
+      StellarSdk.Network.useTestNetwork()
+    } else {
+      server = new StellarSdk.Server(config.pubnet_horizon)
+      StellarSdk.Network.usePublicNetwork()
+    }
+    let des = StellarSdk.Keypair.fromSecret(privKey)
+    server.loadAccount(des.publicKey())
+      .catch(StellarSdk.NotFoundError, function (error) {
+        reject({
+          message: 'The creator account for doesn\'t exists.',
+          error
+        });
+      })
+      .then(function (sourceAccount) {
+        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+          .addOperation(StellarSdk.Operation.setOptions({
+            homeDomain
+          }))
+          .build();
+        transaction.sign(des);
+        return server.submitTransaction(transaction)
+      })
+      .then(function (result) {
+        resolve(result)
+      })
+      .catch(function (error) {
+        reject('Tx error_' + error)
+      })
+  })
+}
+async function setFlag(privKey, Flag) {
+  return new Promise((resolve, reject) => {
+    let config = require('./config')
+    let server
+    let env = config.env
+    let StellarSdk = require('stellar-sdk')
+    if (typeof env != 'undefined' && env === "testnet") {
+      server = new StellarSdk.Server(config.testnet_horizon)
+      StellarSdk.Network.useTestNetwork()
+    } else {
+      server = new StellarSdk.Server(config.pubnet_horizon)
+      StellarSdk.Network.usePublicNetwork()
+    }
+    let des = StellarSdk.Keypair.fromSecret(privKey)
+    server.loadAccount(des.publicKey())
+      .catch(StellarSdk.NotFoundError, function (error) {
+        reject({
+          message: 'The creator account for doesn\'t exists.',
+          error
+        });
+      })
+      .then(function (sourceAccount) {
+        if (Flag !== 1 && Flag !== 2 && Flag !== 4)
+          reject({
+            message: 'Allowed flag values ==> 1 , 2 , 4',
+            error: 'Incorrect flag.'
+          })
+        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+          .addOperation(StellarSdk.Operation.setOptions({
+            setFlags: Flag
+          }))
+          .build();
+        transaction.sign(des);
+        return server.submitTransaction(transaction)
+      })
+      .then(function (result) {
+        resolve(result)
+      })
+      .catch(function (error) {
+        reject('Tx error_' + error)
+      })
+  })
+}
+async function clearFlags(privKey, Flag) {
+  return new Promise((resolve, reject) => {
+    let config = require('./config')
+    let server
+    let env = config.env
+    let StellarSdk = require('stellar-sdk')
+    if (typeof env != 'undefined' && env === "testnet") {
+      server = new StellarSdk.Server(config.testnet_horizon)
+      StellarSdk.Network.useTestNetwork()
+    } else {
+      server = new StellarSdk.Server(config.pubnet_horizon)
+      StellarSdk.Network.usePublicNetwork()
+    }
+    let des = StellarSdk.Keypair.fromSecret(privKey)
+    server.loadAccount(des.publicKey())
+      .catch(StellarSdk.NotFoundError, function (error) {
+        reject({
+          message: 'The creator account for doesn\'t exists.',
+          error
+        });
+      })
+      .then(function (sourceAccount) {
+        if (Flag !== 1 && Flag !== 2 && Flag !== 4 && 1 === 3)
+          reject({
+            message: 'Error cleaning Flags',
+            error: 'Incorrect flag.'
+          })
+        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+          .addOperation(StellarSdk.Operation.setOptions({
+            clearFlags: Flag
+          }))
+          .build();
+        transaction.sign(des);
+        return server.submitTransaction(transaction)
+      })
+      .then(function (result) {
+        resolve(result)
+      })
+      .catch(function (error) {
+        reject('Tx error_' + error)
+      })
+  })
+}
+
+async function setSigner(privKey, signer, weight) {
+  return new Promise((resolve, reject) => {
+    let config = require('./config')
+    let serveric
+    let env = config.env
+    let StellarSdk = require('stellar-sdk')
+    if (typeof env != 'undefined' && env === "testnet") {
+      server = new StellarSdk.Server(config.testnet_horizon)
+      StellarSdk.Network.useTestNetwork()
+    } else {
+      server = new StellarSdk.Server(config.pubnet_horizon)
+      StellarSdk.Network.usePublicNetwork()
+    }
+    let des = StellarSdk.Keypair.fromSecret(privKey)
+    server.loadAccount(des.publicKey())
+      .catch(StellarSdk.NotFoundError, function (error) {
+        reject({
+          message: 'The creator account for doesn\'t exists.',
+          error
+        });
+      })
+      .then(function (sourceAccount) {
+        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+          .addOperation(StellarSdk.Operation.setOptions({
+            signer: {
+              signer,
+              weight
+            }
+          }))
+          .build();
+        transaction.sign(des);
+        return server.submitTransaction(transaction)
+      })
+      .then(function (result) {
+        resolve(result)
+      })
+      .catch(function (error) {
+        reject('Tx error_' + error)
+      })
+  })
+}
+async function setLowThreshold(privKey, lowThreshold, weight) {
+  return new Promise((resolve, reject) => {
+    let config = require('./config')
+    let server
+    let env = config.env
+    let StellarSdk = require('stellar-sdk')
+    if (typeof env != 'undefined' && env === "testnet") {
+      server = new StellarSdk.Server(config.testnet_horizon)
+      StellarSdk.Network.useTestNetwork()
+    } else {
+      server = new StellarSdk.Server(config.pubnet_horizon)
+      StellarSdk.Network.usePublicNetwork()
+    }
+    let des = StellarSdk.Keypair.fromSecret(privKey)
+    server.loadAccount(des.publicKey())
+      .catch(StellarSdk.NotFoundError, function (error) {
+        reject({
+          message: 'The creator account for doesn\'t exists.',
+          error
+        });
+      })
+      .then(function (sourceAccount) {
+        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+          .addOperation(StellarSdk.Operation.setOptions({
+            lowThreshold
+          }))
+          .build();
+        transaction.sign(des);
+        return server.submitTransaction(transaction)
+      })
+      .then(function (result) {
+        resolve(result)
+      })
+      .catch(function (error) {
+        reject('Tx error_' + error)
+      })
+  })
+}
+module.exports = {
+  setInlationDestination,
+  setHomeDomain,
+  setFlag,
+  clearFlags,
+  setSigner,
+  setLowThreshold
+}

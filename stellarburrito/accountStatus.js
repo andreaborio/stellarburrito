@@ -86,7 +86,7 @@ async function getSigners(pubKey) {
 					signers: []
 				}
 				for (let i = 0; i < page.signers.length; i++)
-				signers.signers.push(page.signers)
+					signers.signers.push(page.signers)
 				resolve(signers)
 			})
 			.catch(function (error) {

@@ -1,8 +1,8 @@
 /**
- * transactionsHistory
- * retrive history of transactions of an account from horizon
+ * paymentHistory
+ * retrive history of payments of an account from horizon
  * @param {string} account - The public key of the account.      
- * @param {number} limit - Max limit of transactions that you want
+ * @param {number} limit - Max limit of payments that you want
  * @param {string} order - The order of the results ASC DESC
  * @param {string} cursor - The cursor for querying payments 
  */
@@ -42,6 +42,50 @@ async function paymentsHistory(account, limit = 10, order = 'desc', cursor = 'no
 			})
 	})
 }
+/**
+ * paymentHistory
+ * retrive history of transactions of an account from horizon
+ * @param {string} account - The public key of the account.      
+ * @param {number} limit - Max limit of payments that you want
+ * @param {string} order - The order of the results ASC DESC
+ * @param {string} cursor - The cursor for querying payments 
+ */
+async function transactionsHistory(account, limit = 10, order = 'desc', cursor = 'now') {
+	return new Promise((resolve, reject) => {
+		let config = require('./config')
+		let server
+		let env = config.env
+		let StellarSdk = require('stellar-sdk')
+		if (typeof env != 'undefined' && env === "testnet") {
+			StellarSdk.Network.useTestNetwork()
+			server = new StellarSdk.Server(config.testnet_horizon)
+		} else {
+			StellarSdk.Network.usePublicNetwork()
+			server = new StellarSdk.Server(config.pubnet_horizon)
+		}
+		server.transactions()
+			.forAccount(account)
+			.order(order)
+			.limit(limit)
+			.cursor()
+			.call()
+			.then(function (page) {
+				let i = 0
+				var transactions = {
+					transactions: []
+				}
+				while (i < page.records.length) {
+						transactions.transactions.push(page.records[i])
+					i++
+				}
+				resolve(transactions)
+			})
+			.catch(function (err) {
+				reject('StellarBurrito_HORIZON_ERR can\'t load payments \n\r' + err)
+			})
+	})
+}
 module.exports = {
-	paymentsHistory
+	paymentsHistory,
+	transactionsHistory
 }

@@ -18,6 +18,7 @@ let distributor = 'SCNIYIP6WLTJYOXBQVAWQQJMYIXIIAGFKEJDAZPY4T5FUZL2OODV5PNR'
 let issuer = 'SCYTGAZEMS4Y3EUX2DBAKQPVX6AK4N6OMIKJQXYCRFC573DAECWLFYYY'
 let distributorPair = StellarSdk.Keypair.fromSecret(distributor)
 let issuerPair = StellarSdk.Keypair.fromSecret(issuer)
+let privKeyCreate = ''
 function random() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -25,12 +26,12 @@ function random() {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
 }
-
 step('accountOperations', function () {
     describe('Create new account', () => {
         it('accountOperations.createAccount', (done) => {
             const resolvingPromise = accountOperations.createAccount(config.testaccount)
             resolvingPromise.then((result) => {
+                privKeyCreate = result.privateKey
                 expect(1).to.equal(1);
                 done();
             })
@@ -41,6 +42,31 @@ step('accountOperations', function () {
     describe('Trust new asset', () => {
         it('accountOperations.changeTrust', (done) => {
             const resolvingPromise = accountOperations.changeTrust(alice.secret(), 'GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P', 'ETH', '1')
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+        }).timeout(15000)
+    })
+})
+step('accountOperations', function () {
+    describe('Manage Data', () => {
+        it('accountOperations.manageData', (done) => {
+            accountOperations.manageData(alice.secret(), 'test', 'teseok')
+                .then((result) => {
+                    expect(1).to.equal(1);
+                    done()
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        }).timeout(25000)
+    })
+})
+step('accountOperations', function () {
+    describe('Create new account', () => {
+        it('accountOperations.createAccount', (done) => {
+            const resolvingPromise = accountOperations.mergeAccount(privKeyCreate, alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -71,9 +97,20 @@ step('paymentOperations', function () {
     })
 })
 step('history', function () {
-    describe('Get history', () => {
+    describe('Get payments history', () => {
         it('history.paymentHistory', (done) => {
             const resolvingPromise = history.paymentsHistory(alice.publicKey())
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+        }).timeout(15000)
+    })
+})
+step('history', function () {
+    describe('Get transactions history', () => {
+        it('history.paymentHistory', (done) => {
+            const resolvingPromise = history.transactionsHistory(alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -95,7 +132,10 @@ step('ledger', function () {
 step('offerOperations', function () {
     describe('Create Passive Offer', () => {
         it('offerOperations.createPassiveOffer', (done) => {
-            const resolvingPromise = offerOperations.createPassiveOffer(distributorPair.secret(),'n5',issuerPair.publicKey(),'2',{'d':1000000,'n':1},'0','n2',issuerPair.publicKey())
+            const resolvingPromise = offerOperations.createPassiveOffer(distributorPair.secret(), 'n5', issuerPair.publicKey(), '2', {
+                'd': 1000000,
+                'n': 1
+            }, '0', 'n2', issuerPair.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -106,7 +146,10 @@ step('offerOperations', function () {
 step('offerOperations', function () {
     describe('Manage Offer', () => {
         it('offerOperations.createPassiveOffer', (done) => {
-            const resolvingPromise = offerOperations.manageOffer(distributorPair.secret(),'n5',issuerPair.publicKey(),'2',{'d':1000000,'n':1},'0','n2',issuerPair.publicKey())
+            const resolvingPromise = offerOperations.manageOffer(distributorPair.secret(), 'n5', issuerPair.publicKey(), '2', {
+                'd': 1000000,
+                'n': 1
+            }, '0', 'n2', issuerPair.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();

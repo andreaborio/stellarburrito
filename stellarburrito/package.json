@@ -51,7 +51,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "0.0.11-alpha",
+  "version": "0.0.13-alpha",
   "dependencies": {
     "stellar-sdk": "latest"
   },

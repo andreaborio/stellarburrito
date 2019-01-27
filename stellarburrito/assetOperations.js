@@ -15,7 +15,6 @@
  * 
  * 
  */
-
 async function createAsset(issuer, distributor, amount, assetCode, memoTypeTrust = 'text', memoTrust = 'default', memoTypePay = 'text', memoPay = 'default') {
     return new Promise((resolve, reject) => {
         let accountop = require('./accountOperations')
