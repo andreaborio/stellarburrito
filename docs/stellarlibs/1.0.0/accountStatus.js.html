@@ -84,7 +84,7 @@
       
     
 
-    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li></ul>
+    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setInlationDestination">setInlationDestination</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
   </nav>
 
   <div id="main">
@@ -100,6 +100,9 @@
 <section>
   <article>
     <pre class="prettyprint source linenums"><code>/**
+ * 
+ * 
+ * 
  * getAccount
  * retrive account from horizon
  * @param {string} pubKey - The publicKey of the account
@@ -151,20 +154,15 @@ async function getBalances(pubKey) {
 	})
 }
 /**
- * getBalances
- * retrive account balances from horizon
+ * getData
+ * retrive account data from horizon
  * @param {string} pubKey - The publicKey of the account
  */
-async function getBalances(pubKey) {
+async function getData(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
 			.then(page => {
-				let balances = {
-					balances: []
-				}
-				for (let i = 0; i &lt; page.balances.length; i++)
-					balances.balances.push(page.balances[i])
-				resolve(balances)
+				resolve(page.data_attr)
 			})
 			.catch(function (error) {
 				reject(error)
@@ -192,7 +190,7 @@ async function getSigners(pubKey) {
 					signers: []
 				}
 				for (let i = 0; i &lt; page.signers.length; i++)
-				signers.signers.push(page.signers)
+					signers.signers.push(page.signers)
 				resolve(signers)
 			})
 			.catch(function (error) {
@@ -244,7 +242,8 @@ module.exports = {
 	getSigners,
 	getFlags,
 	getInflationDestination,
-	getHomeDomain
+	getHomeDomain,
+	getData
 }</code></pre>
   </article>
 </section>

@@ -17,13 +17,13 @@ let distributorPair = sb.StellarSdk.Keypair.fromSecret(distributor)
 let issuerPair = sb.StellarSdk.Keypair.fromSecret(issuer)
 
 async function f1() {
-        console.log(distributorPair.publicKey())
-        /*as.getAccountStreams('GDMMPWQCUG6MFF3DTCRBWVXQO5RWHPIQBQWCIUNJF2LAJJQFU24NMTJB')
-        pay.Pay(distributor, issuerPair.publicKey(), '1')
-                .then(res => {
-                        console.log(res)
-                })*/
-                console.log(await ao.manageData(distributor,'test','testt')+' '+distributorPair.publicKey())
-      //  console.log(await hi.paymentsHistory('GDMMPWQCUG6MFF3DTCRBWVXQO5RWHPIQBQWCIUNJF2LAJJQFU24NMTJB'))
+       
+        let test = await pay.Pay(distributor, issuerPair.publicKey(), '0.00001')
+        test = await pay.Pay(distributor, issuerPair.publicKey(), '0.00001')
+        test = await pay.Pay(distributor, issuerPair.publicKey(), '0.00001')
+
+        const message = await hi.transactionsStream(issuerPair.publicKey())
+        console.log(message)
+
 }
 f1()

@@ -29,9 +29,9 @@ async function createAsset(issuer, distributor, amount, assetCode, memoTypeTrust
         }
         issuer = StellarSdk.Keypair.fromSecret(issuer)
         distributor = StellarSdk.Keypair.fromSecret(distributor)
-        accountop.changeTrust(distributor.secret(), issuer.publicKey(), assetCode, amount, memoTypeTrust, memoTrust)
+        accountop.changeTrust(distributor.secret(), issuer.publicKey(), assetCode, amount,15, memoTypeTrust, memoTrust)
             .then(function (res) {
-                paymentop.Pay(issuer.secret(), distributor.publicKey(), amount, assetCode, issuer.publicKey(), memoTypePay, memoPay)
+                paymentop.Pay(issuer.secret(), distributor.publicKey(), amount, assetCode, issuer.publicKey(),15, memoTypePay, memoPay)
                     .then(function (res) {
                         resolve('Asset created')
                     })

@@ -15,7 +15,7 @@
  * @param {string} source - The source account (defaults to transaction source).
  * @returns {JSON} result
  */
-async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer = 'native', amount = '0', price = 1, offerId = '0', buyingCode = 'native', buyingIssuer = 'native', source = 'unsetted') {
+async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer = 'native', amount = '0', price = 1, offerId = '0', buyingCode = 'native', buyingIssuer = 'native',timeout=15, source = 'unsetted') {
     return new Promise((resolve, reject) => {
         let config = require('./config')
         let server
@@ -51,6 +51,7 @@ async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer
                         offerId
                     }))
                     .addMemo(StellarSdk.Memo.text('default'))
+                    .setTimeout(timeout)
                     .build()
                 builder.sign(des)
                 server.submitTransaction(builder)
@@ -61,6 +62,10 @@ async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer
                     .catch(function (error) {
                         reject('StellarBurrito_TX_ERR ' + error)
                     })
+            })
+            .catch(error=>{
+                console.log(error)
+                reject('error \n\r'+error)
             })
     })
 }
@@ -79,7 +84,7 @@ async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer
  * @param {string} source - The source account (defaults to transaction source).
  * @return {JSON} result
  */
-async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', price = '1', offerId = '0', buyingCode = 'native', buyingIssuer = 'native', source = 'unsetted') {
+async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', price = '1', offerId = '0', buyingCode = 'native', buyingIssuer = 'native',timeout=15, source = 'unsetted') {
     return new Promise((resolve, reject) => {
         let config = require('./config')
         let server
@@ -115,6 +120,7 @@ async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', pr
                         offerId
                     }))
                     .addMemo(StellarSdk.Memo.text('default'))
+                    .setTimeout(timeout)
                     .build()
                 builder.sign(des)
                 server.submitTransaction(builder)
@@ -123,6 +129,7 @@ async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', pr
                         resolve(result)
                     })
                     .catch(function (error) {
+                        console.log((error.response))
                         reject('StellarBurrito_TX_ERR ' + error)
                     })
             })
