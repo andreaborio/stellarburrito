@@ -32,7 +32,7 @@ async function getAccount(pubKey) {
 }
 /**
  * getBalances
- * retrive account balances from horizon
+ * retrive account's balances from horizon
  * @param {string} pubKey - The publicKey of the account
  */
 async function getBalances(pubKey) {
@@ -54,7 +54,7 @@ async function getBalances(pubKey) {
 }
 /**
  * getData
- * retrive account data from horizon
+ * retrive account's data from horizon
  * @param {string} pubKey - The publicKey of the account
  */
 async function getData(pubKey) {
@@ -69,6 +69,11 @@ async function getData(pubKey) {
 
 	})
 }
+/**
+ * getThresholds
+ * retrive account thresholds from horizon
+ * @param {string} pubKey - The publicKey of the account
+ */
 async function getThresholds(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
@@ -81,6 +86,11 @@ async function getThresholds(pubKey) {
 
 	})
 }
+/**
+ * getData
+ * retrive account's signers from horizon
+ * @param {string} pubKey - The publicKey of the account
+ */
 async function getSigners(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
@@ -98,6 +108,11 @@ async function getSigners(pubKey) {
 
 	})
 }
+/**
+ * getFlags
+ * retrive account's flags from horizon
+ * @param {string} pubKey - The publicKey of the account
+ */
 async function getFlags(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
@@ -110,6 +125,11 @@ async function getFlags(pubKey) {
 
 	})
 }
+/**
+ * getInflationDestination
+ * retrive account's inflationDestination from horizon
+ * @param {string} pubKey - The publicKey of the account
+ */
 async function getInflationDestination(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)

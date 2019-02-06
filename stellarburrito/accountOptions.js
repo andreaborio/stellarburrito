@@ -383,6 +383,45 @@ async function setMasterWeight(privKey, masterWeight,timeout=15) {
       })
   })
 }
+async function bumpSequence(privKey, bumpTo,timeout=15) {
+  return new Promise((resolve, reject) => {
+    let config = require('./config')
+    let server
+    let env = config.env
+    let StellarSdk = require('stellar-sdk')
+    if (typeof env != 'undefined' && env === "testnet") {
+      server = new StellarSdk.Server(config.testnet_horizon)
+      StellarSdk.Network.useTestNetwork()
+    } else {
+      server = new StellarSdk.Server(config.pubnet_horizon)
+      StellarSdk.Network.usePublicNetwork()
+    }
+    let des = StellarSdk.Keypair.fromSecret(privKey)
+    server.loadAccount(des.publicKey())
+      .catch(StellarSdk.NotFoundError, function (error) {
+        reject({
+          message: 'The creator account for doesn\'t exists.',
+          error
+        });
+      })
+      .then(function (sourceAccount) {
+        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+          .addOperation(StellarSdk.Operation.setOptions({
+            bumpTo
+          }))
+          .setTimeout(timeout)
+          .build();
+        transaction.sign(des);
+        return server.submitTransaction(transaction)
+      })
+      .then(function (result) {
+        resolve(result)
+      })
+      .catch(function (error) {
+        reject('Tx error_' + error)
+      })
+  })
+}
 module.exports = {
   setInlationDestination,
   setHomeDomain,
@@ -391,5 +430,6 @@ module.exports = {
   setLowThreshold,
   setMediumThreshold,
   setHighThreshold,
-  setMasterWeight
+  setMasterWeight,
+  bumpSequence
 }

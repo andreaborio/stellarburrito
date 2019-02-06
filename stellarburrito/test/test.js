@@ -28,8 +28,7 @@ function random() {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
 }
-console.log(bob.publicKey)
-console.log('alice '+alice.publicKey()+ '\n\r bob '+bob.publicKey())
+
 step('accountOperations', function () {
     describe('Create new account', () => {
         it('accountOperations.createAccount', (done) => {
@@ -68,8 +67,8 @@ step('accountOperations', function () {
     })
 })
 step('accountOperations', function () {
-    describe('Create new account', () => {
-        it('accountOperations.createAccount', (done) => {
+    describe('Merge account', () => {
+        it('accountOperations.mergeAccount', (done) => {
             const resolvingPromise = accountOperations.mergeAccount(privKeyCreate, alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
