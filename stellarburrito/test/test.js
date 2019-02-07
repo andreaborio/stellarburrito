@@ -19,6 +19,7 @@ let distributor = 'SCNIYIP6WLTJYOXBQVAWQQJMYIXIIAGFKEJDAZPY4T5FUZL2OODV5PNR'
 let issuer = 'SCYTGAZEMS4Y3EUX2DBAKQPVX6AK4N6OMIKJQXYCRFC573DAECWLFYYY'
 let distributorPair = StellarSdk.Keypair.fromSecret(distributor)
 let issuerPair = StellarSdk.Keypair.fromSecret(issuer)
+console.log(alice.publicKey())
 let privKeyCreate = ''
 let asset =""
 function random() {
@@ -249,6 +250,17 @@ step('account Status', function () {
         }).timeout(30000)
     })
 })
+step('account Status', function () {
+    describe('Get SequenceNumber ', () => {
+        it('accountStatus.getSequenceNumber', (done) => {
+            const resolvingPromise = accountStatus.getSequenceNumber(alice.publicKey())
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+        }).timeout(30000)
+    })
+})
 step('account Options', function () {
     describe('Set Flag ', () => {
         it('accountOptions.setFlag', (done) => {
@@ -263,10 +275,14 @@ step('account Options', function () {
 step('account Options', function () {
     describe('Clear Flag ', () => {
         it('accountOptions.clearFlags', (done) => {
-            const resolvingPromise = accountOptions.clearFlags(alice.secret(),'1')
+            const resolvingPromise = accountOptions.clearFlags(alice.secret(),1)
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
+            })
+            .catch(error=>{
+                console.log(error)
+                expect(2).to.equal(1)
             })
         }).timeout(30000)
     })

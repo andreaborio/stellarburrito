@@ -142,11 +142,33 @@ async function getInflationDestination(pubKey) {
 
 	})
 }
+/**
+ * getHomeDomain
+ * retrive account's homedomain from horizon
+ * @param {string} pubKey - The publicKey of the account
+ */
 async function getHomeDomain(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
 			.then(page => {
 				resolve(page.home_domain)
+			})
+			.catch(function (error) {
+				reject(error)
+			})
+
+	})
+}
+/**
+ * getSequenceNumber
+ * retrive account's sequence number from horizon
+ * @param {string} pubKey - The publicKey of the account
+ */
+async function getSequenceNumber(pubKey) {
+	return new Promise((resolve, reject) => {
+		getAccount(pubKey)
+			.then(page => {
+				resolve(page.sequence)
 			})
 			.catch(function (error) {
 				reject(error)
@@ -162,5 +184,6 @@ module.exports = {
 	getFlags,
 	getInflationDestination,
 	getHomeDomain,
-	getData
+	getData,
+	getSequenceNumber
 }

@@ -17,10 +17,14 @@ let distributorPair = sb.StellarSdk.Keypair.fromSecret(distributor)
 let issuerPair = sb.StellarSdk.Keypair.fromSecret(issuer)
 
 async function f1() {
-       
        // let test = await pay.Pay(distributor, issuerPair.publicKey(), '0.00001')
-        test =await aop.bumpSequence(distributor,'7210305473626333')
-        console.log(test)
+        let testn =await as.getSequenceNumber(issuerPair.publicKey())
+        console.log(distributorPair.publicKey())
+        console.log(testn)
+       let test= await aop.bumpSequence(issuer,'9223372036850775807')
+        testn =await as.getSequenceNumber(issuerPair.publicKey())
+       console.log(distributorPair.publicKey())
+       console.log(testn)
     //    test = await pay.Pay(distributor, issuerPair.publicKey(), '0.00001')
       //  test = await pay.Pay(distributor, issuerPair.publicKey(), '0.00001')
 

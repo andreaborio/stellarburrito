@@ -16,8 +16,7 @@
  * @param {string} assetCode - The assetCode of the asset that you want to trust
  * @param {string} trustLimit - The amount of coin that you want to trust from this issuer
  */
-
-async function setInlationDestination(privKey, inflationDest,timeout=15) {
+async function setOptions(privKey, payload, timeout = 15) {
   return new Promise((resolve, reject) => {
     let config = require('./config')
     let server
@@ -40,9 +39,7 @@ async function setInlationDestination(privKey, inflationDest,timeout=15) {
       })
       .then(function (sourceAccount) {
         let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-          .addOperation(StellarSdk.Operation.setOptions({
-            inflationDest
-          }))
+          .addOperation(StellarSdk.Operation.setOptions(payload))
           .setTimeout(timeout)
           .build();
         transaction.sign(des);
@@ -58,126 +55,9 @@ async function setInlationDestination(privKey, inflationDest,timeout=15) {
       })
   })
 }
-
-async function setHomeDomain(privKey, homeDomain,timeout=15) {
+async function setInlationDestination(privKey, inflationDest, timeout = 15) {
   return new Promise((resolve, reject) => {
-    let config = require('./config')
-    let server
-    let env = config.env
-    let StellarSdk = require('stellar-sdk')
-    if (typeof env != 'undefined' && env === "testnet") {
-      server = new StellarSdk.Server(config.testnet_horizon)
-      StellarSdk.Network.useTestNetwork()
-    } else {
-      server = new StellarSdk.Server(config.pubnet_horizon)
-      StellarSdk.Network.usePublicNetwork()
-    }
-    let des = StellarSdk.Keypair.fromSecret(privKey)
-    server.loadAccount(des.publicKey())
-      .catch(StellarSdk.NotFoundError, function (error) {
-        reject({
-          message: 'The creator account for doesn\'t exists.',
-          error
-        });
-      })
-      .then(function (sourceAccount) {
-        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-          .addOperation(StellarSdk.Operation.setOptions({
-            homeDomain
-          }))
-          .setTimeout(timeout)
-          .build();
-        transaction.sign(des);
-        return server.submitTransaction(transaction)
-      })
-      .then(function (result) {
-        resolve(result)
-      })
-      .catch(function (error) {
-        reject('Tx error_' + error)
-      })
-  })
-}
-async function setFlag(privKey, Flag,timeout=15) {
-  return new Promise((resolve, reject) => {
-    let config = require('./config')
-    let server
-    let env = config.env
-    let StellarSdk = require('stellar-sdk')
-    if (typeof env != 'undefined' && env === "testnet") {
-      server = new StellarSdk.Server(config.testnet_horizon)
-      StellarSdk.Network.useTestNetwork()
-    } else {
-      server = new StellarSdk.Server(config.pubnet_horizon)
-      StellarSdk.Network.usePublicNetwork()
-    }
-    let des = StellarSdk.Keypair.fromSecret(privKey)
-    server.loadAccount(des.publicKey())
-      .catch(StellarSdk.NotFoundError, function (error) {
-        reject({
-          message: 'The creator account for doesn\'t exists.',
-          error
-        });
-      })
-      .then(function (sourceAccount) {
-        if (Flag !== 1 && Flag !== 2 && Flag !== 4)
-          reject({
-            message: 'Allowed flag values ==> 1 , 2 , 4',
-            error: 'Incorrect flag.'
-          })
-        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-          .addOperation(StellarSdk.Operation.setOptions({
-            setFlags: Flag
-          }))
-          .setTimeout(timeout)
-          .build();
-        transaction.sign(des);
-        return server.submitTransaction(transaction)
-      })
-      .then(function (result) {
-        resolve(result)
-      })
-      .catch(function (error) {
-        reject('Tx error_' + error)
-      })
-  })
-}
-async function clearFlags(privKey, Flag,timeout) {
-  return new Promise((resolve, reject) => {
-    let config = require('./config')
-    let server
-    let env = config.env
-    let StellarSdk = require('stellar-sdk')
-    if (typeof env != 'undefined' && env === "testnet") {
-      server = new StellarSdk.Server(config.testnet_horizon)
-      StellarSdk.Network.useTestNetwork()
-    } else {
-      server = new StellarSdk.Server(config.pubnet_horizon)
-      StellarSdk.Network.usePublicNetwork()
-    }
-    let des = StellarSdk.Keypair.fromSecret(privKey)
-    server.loadAccount(des.publicKey())
-      .catch(StellarSdk.NotFoundError, function (error) {
-        reject({
-          message: 'The creator account for doesn\'t exists.',
-          error
-        });
-      })
-      .then(function (sourceAccount) {
-        if (Flag !== 1 && Flag !== 2 && Flag !== 4 && 1 === 3)
-          reject({
-            message: 'Error cleaning Flags',
-            error: 'Incorrect flag.'
-          })
-        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-          .addOperation(StellarSdk.Operation.setOptions({
-            clearFlags: Flag
-          }))
-          .setTimeout(timeout)
-          .build();
-        transaction.sign(des);
-        return server.submitTransaction(transaction)
-      })
+    setOptions(privKey, { inflationDest }, timeout)
       .then(function (result) {
         resolve(result)
       })
@@ -187,38 +67,9 @@ async function clearFlags(privKey, Flag,timeout) {
   })
 }
 
-async function setSigner(privKey, signer, weight,timeout) {
+async function setHomeDomain(privKey, homeDomain, timeout = 15) {
   return new Promise((resolve, reject) => {
-    let config = require('./config')
-    let server
-    let env = config.env
-    let StellarSdk = require('stellar-sdk')
-    if (typeof env != 'undefined' && env === "testnet") {
-      server = new StellarSdk.Server(config.testnet_horizon)
-      StellarSdk.Network.useTestNetwork()
-    } else {
-      server = new StellarSdk.Server(config.pubnet_horizon)
-      StellarSdk.Network.usePublicNetwork()
-    }
-    let des = StellarSdk.Keypair.fromSecret(privKey)
-    server.loadAccount(des.publicKey())
-      .catch(StellarSdk.NotFoundError, function (error) {
-        reject({
-          message: 'The creator account for doesn\'t exists.',
-          error
-        });
-      })
-      .then(function (sourceAccount) {
-        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-          .addOperation(StellarSdk.Operation.setOptions({
-            signer: {
-            }
-          }))
-          .setTimeout(timeout)
-          .build();
-        transaction.sign(des);
-        return server.submitTransaction(transaction)
-      })
+    setOptions(privKey, { homeDomain }, timeout)
       .then(function (result) {
         resolve(result)
       })
@@ -227,37 +78,14 @@ async function setSigner(privKey, signer, weight,timeout) {
       })
   })
 }
-async function setLowThreshold(privKey, lowThreshold, weight,timeout=15) {
+async function setFlag(privKey, Flag, timeout = 15) {
   return new Promise((resolve, reject) => {
-    let config = require('./config')
-    let server
-    let env = config.env
-    let StellarSdk = require('stellar-sdk')
-    if (typeof env != 'undefined' && env === "testnet") {
-      server = new StellarSdk.Server(config.testnet_horizon)
-      StellarSdk.Network.useTestNetwork()
-    } else {
-      server = new StellarSdk.Server(config.pubnet_horizon)
-      StellarSdk.Network.usePublicNetwork()
-    }
-    let des = StellarSdk.Keypair.fromSecret(privKey)
-    server.loadAccount(des.publicKey())
-      .catch(StellarSdk.NotFoundError, function (error) {
-        reject({
-          message: 'The creator account for doesn\'t exists.',
-          error
-        });
+    if (Flag != 1 && Flag != 2 && Flag != 4)
+      reject({
+        message: 'Allowed flag values ==> 1 , 2 , 4',
+        error: 'Incorrect flag.'
       })
-      .then(function (sourceAccount) {
-        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-          .addOperation(StellarSdk.Operation.setOptions({
-            lowThreshold
-          }))
-          .setTimeout(timeout)
-          .build();
-        transaction.sign(des);
-        return server.submitTransaction(transaction)
-      })
+    setOptions(privKey, { setFlags: Flag }, timeout)
       .then(function (result) {
         resolve(result)
       })
@@ -266,37 +94,14 @@ async function setLowThreshold(privKey, lowThreshold, weight,timeout=15) {
       })
   })
 }
-async function setMediumThreshold(privKey, medThreshold, weight,timeout=15) {
+async function clearFlags(privKey, Flag, timeout) {
   return new Promise((resolve, reject) => {
-    let config = require('./config')
-    let server
-    let env = config.env
-    let StellarSdk = require('stellar-sdk')
-    if (typeof env != 'undefined' && env === "testnet") {
-      server = new StellarSdk.Server(config.testnet_horizon)
-      StellarSdk.Network.useTestNetwork()
-    } else {
-      server = new StellarSdk.Server(config.pubnet_horizon)
-      StellarSdk.Network.usePublicNetwork()
-    }
-    let des = StellarSdk.Keypair.fromSecret(privKey)
-    server.loadAccount(des.publicKey())
-      .catch(StellarSdk.NotFoundError, function (error) {
-        reject({
-          message: 'The creator account for doesn\'t exists.',
-          error
-        });
+    if (Flag != 1 && Flag != 2 && Flag != 4)
+      reject({
+        message: 'Allowed flag values ==> 1 , 2 , 4',
+        error: 'Incorrect flag.'
       })
-      .then(function (sourceAccount) {
-        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-          .addOperation(StellarSdk.Operation.setOptions({
-            medThreshold
-          }))
-          .setTimeout(timeout)
-          .build();
-        transaction.sign(des);
-        return server.submitTransaction(transaction)
-      })
+    setOptions(privKey, { clearFlags: Flag }, timeout)
       .then(function (result) {
         resolve(result)
       })
@@ -305,37 +110,14 @@ async function setMediumThreshold(privKey, medThreshold, weight,timeout=15) {
       })
   })
 }
-async function setHighThreshold(privKey, highThreshold, weight,timeout=15) {
+
+async function setSigner(privKey, signerPubKey, weight, timeout) {
   return new Promise((resolve, reject) => {
-    let config = require('./config')
-    let server
-    let env = config.env
-    let StellarSdk = require('stellar-sdk')
-    if (typeof env != 'undefined' && env === "testnet") {
-      server = new StellarSdk.Server(config.testnet_horizon)
-      StellarSdk.Network.useTestNetwork()
-    } else {
-      server = new StellarSdk.Server(config.pubnet_horizon)
-      StellarSdk.Network.usePublicNetwork()
+    let payload = {
+      ed25519PublicKey: signerPubKey,
+      weight
     }
-    let des = StellarSdk.Keypair.fromSecret(privKey)
-    server.loadAccount(des.publicKey())
-      .catch(StellarSdk.NotFoundError, function (error) {
-        reject({
-          message: 'The creator account for doesn\'t exists.',
-          error
-        });
-      })
-      .then(function (sourceAccount) {
-        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-          .addOperation(StellarSdk.Operation.setOptions({
-            highThreshold
-          }))
-          .setTimeout(timeout)
-          .build();
-        transaction.sign(des);
-        return server.submitTransaction(transaction)
-      })
+    setOptions(privKey, payload, timeout)
       .then(function (result) {
         resolve(result)
       })
@@ -344,37 +126,9 @@ async function setHighThreshold(privKey, highThreshold, weight,timeout=15) {
       })
   })
 }
-async function setMasterWeight(privKey, masterWeight,timeout=15) {
+async function setLowThreshold(privKey, lowThreshold, timeout = 15) {
   return new Promise((resolve, reject) => {
-    let config = require('./config')
-    let server
-    let env = config.env
-    let StellarSdk = require('stellar-sdk')
-    if (typeof env != 'undefined' && env === "testnet") {
-      server = new StellarSdk.Server(config.testnet_horizon)
-      StellarSdk.Network.useTestNetwork()
-    } else {
-      server = new StellarSdk.Server(config.pubnet_horizon)
-      StellarSdk.Network.usePublicNetwork()
-    }
-    let des = StellarSdk.Keypair.fromSecret(privKey)
-    server.loadAccount(des.publicKey())
-      .catch(StellarSdk.NotFoundError, function (error) {
-        reject({
-          message: 'The creator account for doesn\'t exists.',
-          error
-        });
-      })
-      .then(function (sourceAccount) {
-        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-          .addOperation(StellarSdk.Operation.setOptions({
-            masterWeight
-          }))
-          .setTimeout(timeout)
-          .build();
-        transaction.sign(des);
-        return server.submitTransaction(transaction)
-      })
+    setOptions(privKey, { lowThreshold }, timeout)
       .then(function (result) {
         resolve(result)
       })
@@ -383,37 +137,42 @@ async function setMasterWeight(privKey, masterWeight,timeout=15) {
       })
   })
 }
-async function bumpSequence(privKey, bumpTo,timeout=15) {
+async function setMediumThreshold(privKey, medThreshold, timeout = 15) {
   return new Promise((resolve, reject) => {
-    let config = require('./config')
-    let server
-    let env = config.env
-    let StellarSdk = require('stellar-sdk')
-    if (typeof env != 'undefined' && env === "testnet") {
-      server = new StellarSdk.Server(config.testnet_horizon)
-      StellarSdk.Network.useTestNetwork()
-    } else {
-      server = new StellarSdk.Server(config.pubnet_horizon)
-      StellarSdk.Network.usePublicNetwork()
-    }
-    let des = StellarSdk.Keypair.fromSecret(privKey)
-    server.loadAccount(des.publicKey())
-      .catch(StellarSdk.NotFoundError, function (error) {
-        reject({
-          message: 'The creator account for doesn\'t exists.',
-          error
-        });
+    setOptions(privKey, { medThreshold }, timeout)
+      .then(function (result) {
+        resolve(result)
       })
-      .then(function (sourceAccount) {
-        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
-          .addOperation(StellarSdk.Operation.setOptions({
-            bumpTo
-          }))
-          .setTimeout(timeout)
-          .build();
-        transaction.sign(des);
-        return server.submitTransaction(transaction)
+      .catch(function (error) {
+        reject('Tx error_' + error)
       })
+  })
+}
+async function setHighThreshold(privKey, highThreshold, timeout = 15) {
+  return new Promise((resolve, reject) => {
+    setOptions(privKey, { highThreshold }, timeout)
+      .then(function (result) {
+        resolve(result)
+      })
+      .catch(function (error) {
+        reject('Tx error_' + error)
+      })
+  })
+}
+async function setMasterWeight(privKey, masterWeight, timeout = 15) {
+  return new Promise((resolve, reject) => {
+    setOptions(privKey, { masterWeight }, timeout)
+      .then(function (result) {
+        resolve(result)
+      })
+      .catch(function (error) {
+        reject('Tx error_' + error)
+      })
+  })
+}
+async function bumpSequence(privKey, bumpTo, timeout = 15) {
+  return new Promise((resolve, reject) => {
+    setOptions(privKey, { bumpTo }, timeout)
       .then(function (result) {
         resolve(result)
       })
@@ -431,5 +190,7 @@ module.exports = {
   setMediumThreshold,
   setHighThreshold,
   setMasterWeight,
-  bumpSequence
+  bumpSequence,
+  setSigner,
+  setOptions
 }
