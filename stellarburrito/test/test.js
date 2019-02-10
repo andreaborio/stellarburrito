@@ -22,6 +22,7 @@ let issuerPair = StellarSdk.Keypair.fromSecret(issuer)
 console.log(alice.publicKey())
 let privKeyCreate = ''
 let asset =""
+console.log(bob.publicKey()+' '+alice.publicKey())
 function random() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -251,6 +252,17 @@ step('account Status', function () {
     })
 })
 step('account Status', function () {
+    describe('Get Trustlines ', () => {
+        it('accountStatus.getThresholds', (done) => {
+            const resolvingPromise = accountStatus.getTrustlines(alice.publicKey())
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+        }).timeout(30000)
+    })
+})
+step('account Status', function () {
     describe('Get SequenceNumber ', () => {
         it('accountStatus.getSequenceNumber', (done) => {
             const resolvingPromise = accountStatus.getSequenceNumber(alice.publicKey())
@@ -272,6 +284,7 @@ step('account Options', function () {
         }).timeout(30000)
     })
 })
+
 step('account Options', function () {
     describe('Clear Flag ', () => {
         it('accountOptions.clearFlags', (done) => {

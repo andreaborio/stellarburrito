@@ -2,19 +2,12 @@
 /**
  * @author Andrea Borio andrea.borio(at)outlook.com
  * 
- * Create new account function
- * privKey, memoTypeCreate, memoCreate are mandatory
- * Add a trustline on the new account overloading this function
+ * Set Account options
+ * 
  *
  * @param {string} privKey - The private key of the creator account.
- * @param {string} memoTypeCreate - The type of memo the create transaction that you want create (text,id,return)
- * @param {string} memoCreate - The content of memo the create transaction that you want create 
- * @param {string} memoTypeTrust - The type of memo the transaction that you want create (text,id,return)
- * @param {string} startingBalance - The strarting balance of created account
- * @param {string} memoTrust - The content of memo the change trust transaction that you want create (text,id,return)
- * @param {string} issuer - The public key of the issuer 
- * @param {string} assetCode - The assetCode of the asset that you want to trust
- * @param {string} trustLimit - The amount of coin that you want to trust from this issuer
+ * @param {JSON} payload - The json with options
+ * @param {number} timeout - Timeout in seconds
  */
 async function setOptions(privKey, payload, timeout = 15) {
   return new Promise((resolve, reject) => {
@@ -55,6 +48,14 @@ async function setOptions(privKey, payload, timeout = 15) {
       })
   })
 }
+/**
+* Set Inflation Destination
+* set inflation destination for the given account
+*
+* @param {string} privKey - The private key of the account.
+* @param {string} inflationDest - The public key of inflation destination
+* @param {number} timeout - Timeout in seconds
+*/
 async function setInlationDestination(privKey, inflationDest, timeout = 15) {
   return new Promise((resolve, reject) => {
     setOptions(privKey, { inflationDest }, timeout)
@@ -66,7 +67,14 @@ async function setInlationDestination(privKey, inflationDest, timeout = 15) {
       })
   })
 }
-
+/**
+* Set Home domain
+* set home domain for the given account
+*
+* @param {string} privKey - The private key of the account.
+* @param {string} homeDomain - The homedomain that you want to set
+* @param {number} timeout - Timeout in seconds
+*/
 async function setHomeDomain(privKey, homeDomain, timeout = 15) {
   return new Promise((resolve, reject) => {
     setOptions(privKey, { homeDomain }, timeout)
@@ -78,6 +86,14 @@ async function setHomeDomain(privKey, homeDomain, timeout = 15) {
       })
   })
 }
+/**
+* Set Flag
+* set Flag for the given account
+*
+* @param {string} privKey - The private key of the account.
+* @param {string} Flag -1 for Authorization required 2 for Authorization revocable 4 forAuthorization immutable 
+* @param {number} timeout - Timeout in seconds
+*/
 async function setFlag(privKey, Flag, timeout = 15) {
   return new Promise((resolve, reject) => {
     if (Flag != 1 && Flag != 2 && Flag != 4)
@@ -94,7 +110,15 @@ async function setFlag(privKey, Flag, timeout = 15) {
       })
   })
 }
-async function clearFlags(privKey, Flag, timeout) {
+/**
+* Clear Flag
+* Clear a specific flag for the given account
+*
+* @param {string} privKey - The private key of the account.
+* @param {string} Flag -1 for Authorization required 2 for Authorization revocable 4 forAuthorization immutable 
+* @param {number} timeout - Timeout in seconds
+*/
+async function clearFlag(privKey, Flag, timeout) {
   return new Promise((resolve, reject) => {
     if (Flag != 1 && Flag != 2 && Flag != 4)
       reject({
@@ -110,7 +134,15 @@ async function clearFlags(privKey, Flag, timeout) {
       })
   })
 }
-
+/**
+* Set Signer
+* Set a new signer for the given account
+*
+* @param {string} privKey - The private key of the account.
+* @param {string} signerPubKey - The public key of the new signer 
+* @param {number} weight - weight for the signer 0-255
+* @param {number} timeout - Timeout in seconds
+*/
 async function setSigner(privKey, signerPubKey, weight, timeout) {
   return new Promise((resolve, reject) => {
     let payload = {
@@ -126,6 +158,14 @@ async function setSigner(privKey, signerPubKey, weight, timeout) {
       })
   })
 }
+/**
+* Set lowthreshold
+* Set lowthreshold for the given account
+*
+* @param {string} privKey - The private key of the account.
+* @param {number} lowThreshold - The value of Threshold 0-255
+* @param {number} timeout - Timeout in seconds
+*/
 async function setLowThreshold(privKey, lowThreshold, timeout = 15) {
   return new Promise((resolve, reject) => {
     setOptions(privKey, { lowThreshold }, timeout)
@@ -137,6 +177,14 @@ async function setLowThreshold(privKey, lowThreshold, timeout = 15) {
       })
   })
 }
+/**
+* Set mediumthreshold
+* Set mediumthreshold for the given account
+*
+* @param {string} privKey - The private key of the account.
+* @param {number} medThreshold - The value of Threshold 0-255
+* @param {number} timeout - Timeout in seconds
+*/
 async function setMediumThreshold(privKey, medThreshold, timeout = 15) {
   return new Promise((resolve, reject) => {
     setOptions(privKey, { medThreshold }, timeout)
@@ -148,6 +196,14 @@ async function setMediumThreshold(privKey, medThreshold, timeout = 15) {
       })
   })
 }
+/**
+* Set highThreshold
+* Set highthreshold for the given account
+*
+* @param {string} privKey - The private key of the account.
+* @param {number} highThreshold - The value of Threshold 0-255
+* @param {number} timeout - Timeout in seconds
+*/
 async function setHighThreshold(privKey, highThreshold, timeout = 15) {
   return new Promise((resolve, reject) => {
     setOptions(privKey, { highThreshold }, timeout)
@@ -159,6 +215,13 @@ async function setHighThreshold(privKey, highThreshold, timeout = 15) {
       })
   })
 }
+/**
+* Set master weight
+* Set Master key weight for the given account
+* @param {string} privKey - The private key of the account.
+* @param {number} masterWeight - The weight of master key 0-255
+* @param {number} timeout - Timeout in seconds
+*/
 async function setMasterWeight(privKey, masterWeight, timeout = 15) {
   return new Promise((resolve, reject) => {
     setOptions(privKey, { masterWeight }, timeout)
@@ -170,6 +233,13 @@ async function setMasterWeight(privKey, masterWeight, timeout = 15) {
       })
   })
 }
+/**
+* bump sequenge
+* Bump sequence of the given account
+* @param {string} privKey - The private key of the account.
+* @param {number} bumpTo - The sequence number from 0-9223372036854775807
+* @param {number} timeout - Timeout in seconds
+*/
 async function bumpSequence(privKey, bumpTo, timeout = 15) {
   return new Promise((resolve, reject) => {
     setOptions(privKey, { bumpTo }, timeout)
@@ -185,7 +255,7 @@ module.exports = {
   setInlationDestination,
   setHomeDomain,
   setFlag,
-  clearFlags,
+  clearFlag,
   setLowThreshold,
   setMediumThreshold,
   setHighThreshold,

@@ -84,7 +84,7 @@
       
     
 
-    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setInlationDestination">setInlationDestination</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
+    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getFlags">getFlags</a></li><li><a href="global.html#getHomeDomain">getHomeDomain</a></li><li><a href="global.html#getInflationDestination">getInflationDestination</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#getSequenceNumber">getSequenceNumber</a></li><li><a href="global.html#getSigners">getSigners</a></li><li><a href="global.html#getThresholds">getThresholds</a></li><li><a href="global.html#getTrustlines">getTrustlines</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setOptions">setOptions</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
   </nav>
 
   <div id="main">
@@ -116,7 +116,7 @@
  * @param {string} source - The source account (defaults to transaction source).
  * @returns {JSON} result
  */
-async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer = 'native', amount = '0', price = 1, offerId = '0', buyingCode = 'native', buyingIssuer = 'native', source = 'unsetted') {
+async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer = 'native', amount = '0', price = 1, offerId = '0', buyingCode = 'native', buyingIssuer = 'native',timeout=15, source = 'unsetted') {
     return new Promise((resolve, reject) => {
         let config = require('./config')
         let server
@@ -152,6 +152,7 @@ async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer
                         offerId
                     }))
                     .addMemo(StellarSdk.Memo.text('default'))
+                    .setTimeout(timeout)
                     .build()
                 builder.sign(des)
                 server.submitTransaction(builder)
@@ -162,6 +163,10 @@ async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer
                     .catch(function (error) {
                         reject('StellarBurrito_TX_ERR ' + error)
                     })
+            })
+            .catch(error=>{
+                console.log(error)
+                reject('error \n\r'+error)
             })
     })
 }
@@ -180,7 +185,7 @@ async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer
  * @param {string} source - The source account (defaults to transaction source).
  * @return {JSON} result
  */
-async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', price = '1', offerId = '0', buyingCode = 'native', buyingIssuer = 'native', source = 'unsetted') {
+async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', price = '1', offerId = '0', buyingCode = 'native', buyingIssuer = 'native',timeout=15, source = 'unsetted') {
     return new Promise((resolve, reject) => {
         let config = require('./config')
         let server
@@ -216,6 +221,7 @@ async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', pr
                         offerId
                     }))
                     .addMemo(StellarSdk.Memo.text('default'))
+                    .setTimeout(timeout)
                     .build()
                 builder.sign(des)
                 server.submitTransaction(builder)
@@ -224,7 +230,7 @@ async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', pr
                         resolve(result)
                     })
                     .catch(function (error) {
-                        console.log(JSON.stringify(error))
+                        console.log((error.response))
                         reject('StellarBurrito_TX_ERR ' + error)
                     })
             })

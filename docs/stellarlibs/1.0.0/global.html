@@ -82,7 +82,7 @@
       
     
 
-    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setInlationDestination">setInlationDestination</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
+    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getFlags">getFlags</a></li><li><a href="global.html#getHomeDomain">getHomeDomain</a></li><li><a href="global.html#getInflationDestination">getInflationDestination</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#getSequenceNumber">getSequenceNumber</a></li><li><a href="global.html#getSigners">getSigners</a></li><li><a href="global.html#getThresholds">getThresholds</a></li><li><a href="global.html#getTrustlines">getTrustlines</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setOptions">setOptions</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
   </nav>
 
   <div id="main">
@@ -464,7 +464,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="accountOperations.js.html">accountOperations.js</a>, <a href="accountOperations.js.html#line116">line 116</a>
+          <a href="accountOperations.js.html">accountOperations.js</a>, <a href="accountOperations.js.html#line117">line 117</a>
         </li>
       </ul>
     </dd>
@@ -1848,7 +1848,7 @@ retrive account from horizon</p>
 
   <div class="description">
     <p>getBalances
-retrive account balances from horizon</p>
+retrive account's balances from horizon</p>
   </div>
 
 
@@ -1995,7 +1995,7 @@ retrive account balances from horizon</p>
 
   <div class="description">
     <p>getData
-retrive account data from horizon</p>
+retrive account's data from horizon</p>
   </div>
 
 
@@ -2093,7 +2093,448 @@ retrive account data from horizon</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="accountStatus.js.html">accountStatus.js</a>, <a href="accountStatus.js.html#line60">line 60</a>
+          <a href="accountStatus.js.html">accountStatus.js</a>, <a href="accountStatus.js.html#line81">line 81</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#getFlags">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="getFlags">
+      <span class="type-signature">(async) </span>getFlags<span class="signature">(pubKey)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>getFlags
+retrive account's flags from horizon</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>pubKey</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The publicKey of the account</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="accountStatus.js.html">accountStatus.js</a>, <a href="accountStatus.js.html#line137">line 137</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#getHomeDomain">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="getHomeDomain">
+      <span class="type-signature">(async) </span>getHomeDomain<span class="signature">(pubKey)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>getHomeDomain
+retrive account's homedomain from horizon</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>pubKey</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The publicKey of the account</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="accountStatus.js.html">accountStatus.js</a>, <a href="accountStatus.js.html#line171">line 171</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#getInflationDestination">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="getInflationDestination">
+      <span class="type-signature">(async) </span>getInflationDestination<span class="signature">(pubKey)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>getInflationDestination
+retrive account's inflationDestination from horizon</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>pubKey</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The publicKey of the account</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="accountStatus.js.html">accountStatus.js</a>, <a href="accountStatus.js.html#line154">line 154</a>
         </li>
       </ul>
     </dd>
@@ -2351,6 +2792,594 @@ retrive ledgers from horizon</p>
   
 
   <span class='name-container'>
+    <a class="link-icon" href="#getSequenceNumber">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="getSequenceNumber">
+      <span class="type-signature">(async) </span>getSequenceNumber<span class="signature">(pubKey)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>getSequenceNumber
+retrive account's sequence number from horizon</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>pubKey</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The publicKey of the account</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="accountStatus.js.html">accountStatus.js</a>, <a href="accountStatus.js.html#line188">line 188</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#getSigners">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="getSigners">
+      <span class="type-signature">(async) </span>getSigners<span class="signature">(pubKey)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>getData
+retrive account's signers from horizon</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>pubKey</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The publicKey of the account</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="accountStatus.js.html">accountStatus.js</a>, <a href="accountStatus.js.html#line115">line 115</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#getThresholds">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="getThresholds">
+      <span class="type-signature">(async) </span>getThresholds<span class="signature">(pubKey)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>getThresholds
+retrive account thresholds from horizon</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>pubKey</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The publicKey of the account</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="accountStatus.js.html">accountStatus.js</a>, <a href="accountStatus.js.html#line98">line 98</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#getTrustlines">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="getTrustlines">
+      <span class="type-signature">(async) </span>getTrustlines<span class="signature">(pubKey)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>getTrustlines
+retrive account's balances from horizon</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>pubKey</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The publicKey of the account</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="accountStatus.js.html">accountStatus.js</a>, <a href="accountStatus.js.html#line60">line 60</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
     <a class="link-icon" href="#manageData">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
@@ -2522,7 +3551,7 @@ retrive ledgers from horizon</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="accountOperations.js.html">accountOperations.js</a>, <a href="accountOperations.js.html#line234">line 234</a>
+          <a href="accountOperations.js.html">accountOperations.js</a>, <a href="accountOperations.js.html#line237">line 237</a>
         </li>
       </ul>
     </dd>
@@ -2951,7 +3980,7 @@ retrive ledgers from horizon</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="offerOperations.js.html">offerOperations.js</a>, <a href="offerOperations.js.html#line82">line 82</a>
+          <a href="offerOperations.js.html">offerOperations.js</a>, <a href="offerOperations.js.html#line87">line 87</a>
         </li>
       </ul>
     </dd>
@@ -3126,7 +4155,7 @@ retrive ledgers from horizon</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="accountOperations.js.html">accountOperations.js</a>, <a href="accountOperations.js.html#line184">line 184</a>
+          <a href="accountOperations.js.html">accountOperations.js</a>, <a href="accountOperations.js.html#line186">line 186</a>
         </li>
       </ul>
     </dd>
@@ -3777,13 +4806,13 @@ retrive history of payments of an account from horizon</p>
   
 
   <span class='name-container'>
-    <a class="link-icon" href="#setInlationDestination">
+    <a class="link-icon" href="#setOptions">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
       </svg>
     </a>
-    <h4 class="name" id="setInlationDestination">
-      <span class="type-signature">(async) </span>setInlationDestination<span class="signature">(privKey, memoTypeCreate, memoCreate, memoTypeTrust, startingBalance, memoTrust, issuer, assetCode, trustLimit)</span><span class="type-signature"></span>
+    <h4 class="name" id="setOptions">
+      <span class="type-signature">(async) </span>setOptions<span class="signature">(privKey, memoTypeCreate, memoCreate, memoTypeTrust, startingBalance, memoTrust, issuer, assetCode, trustLimit)</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -4133,7 +5162,7 @@ Add a trustline on the new account overloading this function
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="accountOptions.js.html">accountOptions.js</a>, <a href="accountOptions.js.html#line20">line 20</a>
+          <a href="accountOptions.js.html">accountOptions.js</a>, <a href="accountOptions.js.html#line19">line 19</a>
         </li>
       </ul>
     </dd>

@@ -53,6 +53,27 @@ async function getBalances(pubKey) {
 	})
 }
 /**
+ * getTrustlines
+ * retrive account's balances from horizon
+ * @param {string} pubKey - The publicKey of the account
+ */
+async function getTrustlines(pubKey) {
+	return new Promise((resolve, reject) => {
+		getAccount(pubKey)
+			.then(page => {
+				let assets = {assets: []}
+				for (let i = 0; i < page.balances.length; i++)
+					if(typeof page.balances[i].asset_issuer!='undefined')
+					assets.assets.push({asset_code:page.balances[i].asset_code,asset_issuer:page.balances[i].asset_issuer})
+				resolve(assets)
+			})
+			.catch(function (error) {
+				reject(error)
+			})
+
+	})
+}
+/**
  * getData
  * retrive account's data from horizon
  * @param {string} pubKey - The publicKey of the account
@@ -61,6 +82,12 @@ async function getData(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
 			.then(page => {
+				let i=0
+				/*let data={data:[]}
+				while(i<page.data_attr.length){
+					data.data.push(page.data_attr[i])
+					i++
+				}*/
 				resolve(page.data_attr)
 			})
 			.catch(function (error) {
@@ -185,5 +212,6 @@ module.exports = {
 	getInflationDestination,
 	getHomeDomain,
 	getData,
-	getSequenceNumber
+	getSequenceNumber,
+	getTrustlines
 }

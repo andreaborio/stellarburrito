@@ -84,7 +84,7 @@
       
     
 
-    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setInlationDestination">setInlationDestination</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
+    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getFlags">getFlags</a></li><li><a href="global.html#getHomeDomain">getHomeDomain</a></li><li><a href="global.html#getInflationDestination">getInflationDestination</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#getSequenceNumber">getSequenceNumber</a></li><li><a href="global.html#getSigners">getSigners</a></li><li><a href="global.html#getThresholds">getThresholds</a></li><li><a href="global.html#getTrustlines">getTrustlines</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setOptions">setOptions</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
   </nav>
 
   <div id="main">
@@ -133,7 +133,7 @@ async function getAccount(pubKey) {
 }
 /**
  * getBalances
- * retrive account balances from horizon
+ * retrive account's balances from horizon
  * @param {string} pubKey - The publicKey of the account
  */
 async function getBalances(pubKey) {
@@ -154,8 +154,29 @@ async function getBalances(pubKey) {
 	})
 }
 /**
+ * getTrustlines
+ * retrive account's balances from horizon
+ * @param {string} pubKey - The publicKey of the account
+ */
+async function getTrustlines(pubKey) {
+	return new Promise((resolve, reject) => {
+		getAccount(pubKey)
+			.then(page => {
+				let assets = {assets: []}
+				for (let i = 0; i &lt; page.balances.length; i++)
+					if(typeof page.balances[i].asset_issuer!='undefined')
+					assets.assets.push({asset_code:page.balances[i].asset_code,asset_issuer:page.balances[i].asset_issuer})
+				resolve(assets)
+			})
+			.catch(function (error) {
+				reject(error)
+			})
+
+	})
+}
+/**
  * getData
- * retrive account data from horizon
+ * retrive account's data from horizon
  * @param {string} pubKey - The publicKey of the account
  */
 async function getData(pubKey) {
@@ -170,6 +191,11 @@ async function getData(pubKey) {
 
 	})
 }
+/**
+ * getThresholds
+ * retrive account thresholds from horizon
+ * @param {string} pubKey - The publicKey of the account
+ */
 async function getThresholds(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
@@ -182,6 +208,11 @@ async function getThresholds(pubKey) {
 
 	})
 }
+/**
+ * getData
+ * retrive account's signers from horizon
+ * @param {string} pubKey - The publicKey of the account
+ */
 async function getSigners(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
@@ -199,6 +230,11 @@ async function getSigners(pubKey) {
 
 	})
 }
+/**
+ * getFlags
+ * retrive account's flags from horizon
+ * @param {string} pubKey - The publicKey of the account
+ */
 async function getFlags(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
@@ -211,6 +247,11 @@ async function getFlags(pubKey) {
 
 	})
 }
+/**
+ * getInflationDestination
+ * retrive account's inflationDestination from horizon
+ * @param {string} pubKey - The publicKey of the account
+ */
 async function getInflationDestination(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
@@ -223,11 +264,33 @@ async function getInflationDestination(pubKey) {
 
 	})
 }
+/**
+ * getHomeDomain
+ * retrive account's homedomain from horizon
+ * @param {string} pubKey - The publicKey of the account
+ */
 async function getHomeDomain(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
 			.then(page => {
 				resolve(page.home_domain)
+			})
+			.catch(function (error) {
+				reject(error)
+			})
+
+	})
+}
+/**
+ * getSequenceNumber
+ * retrive account's sequence number from horizon
+ * @param {string} pubKey - The publicKey of the account
+ */
+async function getSequenceNumber(pubKey) {
+	return new Promise((resolve, reject) => {
+		getAccount(pubKey)
+			.then(page => {
+				resolve(page.sequence)
 			})
 			.catch(function (error) {
 				reject(error)
@@ -243,7 +306,9 @@ module.exports = {
 	getFlags,
 	getInflationDestination,
 	getHomeDomain,
-	getData
+	getData,
+	getSequenceNumber,
+	getTrustlines
 }</code></pre>
   </article>
 </section>

@@ -84,7 +84,7 @@
       
     
 
-    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setInlationDestination">setInlationDestination</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
+    <h3 id="global-nav">Global</h3><ul><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getFlags">getFlags</a></li><li><a href="global.html#getHomeDomain">getHomeDomain</a></li><li><a href="global.html#getInflationDestination">getInflationDestination</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#getSequenceNumber">getSequenceNumber</a></li><li><a href="global.html#getSigners">getSigners</a></li><li><a href="global.html#getThresholds">getThresholds</a></li><li><a href="global.html#getTrustlines">getTrustlines</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setOptions">setOptions</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
   </nav>
 
   <div id="main">
@@ -118,7 +118,7 @@
  * @param {string} trustLimit - The amount of coin that you want to trust from this issuer
  */
 
-async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'default', startingBalance = '1.501', memoTypeTrust = 'text', memoTrust = 'default', issuer = 'unsetted', assetCode = 'unsetted', trustLimit = 'unsetted') {
+async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'default', startingBalance = '1.501',timeout=15, memoTypeTrust = 'text', memoTrust = 'default', issuer = 'unsetted', assetCode = 'unsetted', trustLimit = 'unsetted') {
   return new Promise((resolve, reject) => {
     let config = require('./config')
     let server
@@ -162,6 +162,7 @@ async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'def
             startingBalance 
           }))
           .addMemo(memoFinalCreate)
+          .setTimeout(timeout)
           .build();
         transaction.sign(des);
         return server.submitTransaction(transaction)
@@ -214,7 +215,7 @@ async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'def
  * 
  */
 
-async function changeTrust(privKey, issuer, assetCode, trustLimit, memoType = 'text', memo = 'default') {
+async function changeTrust(privKey, issuer, assetCode, trustLimit,timeout=15, memoType = 'text', memo = 'default') {
   return new Promise((resolve, reject) => {
     let config = require('./config')
     let server
@@ -258,6 +259,7 @@ async function changeTrust(privKey, issuer, assetCode, trustLimit, memoType = 't
             limit: trustLimit
           }))
           .addMemo(memoFinal)
+          .setTimeout(timeout)
           .build();
         transaction.sign(des);
         return server.submitTransaction(transaction)
@@ -282,7 +284,7 @@ async function changeTrust(privKey, issuer, assetCode, trustLimit, memoType = 't
  * 
  */
 
-async function mergeAccount(privKey, destination) {
+async function mergeAccount(privKey, destination,timeout=15) {
   return new Promise((resolve, reject) => {
     let config = require('./config')
     let server
@@ -308,6 +310,7 @@ async function mergeAccount(privKey, destination) {
           .addOperation(StellarSdk.Operation.accountMerge({
             destination
           }))
+          .setTimeout(timeout)
           .build();
         transaction.sign(des);
         return server.submitTransaction(transaction)
@@ -332,7 +335,7 @@ async function mergeAccount(privKey, destination) {
  * 
  * 
  */
-async function manageData(privKey, name,value) {
+async function manageData(privKey, name,value,timeout=15) {
   return new Promise((resolve, reject) => {
     let config = require('./config')
     let server
@@ -359,6 +362,7 @@ async function manageData(privKey, name,value) {
             name,
             value
           }))
+          .setTimeout(timeout)
           .build();
         transaction.sign(des);
         return server.submitTransaction(transaction)

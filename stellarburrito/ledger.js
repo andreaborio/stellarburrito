@@ -1,3 +1,14 @@
+let config = require('./config')
+let server
+let env = config.env
+let StellarSdk = require('stellar-sdk')
+if (typeof env != 'undefined' && env === "testnet") {
+	StellarSdk.Network.useTestNetwork()
+	server = new StellarSdk.Server(config.testnet_horizon)
+} else {
+	StellarSdk.Network.usePublicNetwork()
+	server = new StellarSdk.Server(config.pubnet_horizon)
+}
 /* eslint-disable no-plusplus */
 /* eslint-disable prefer-reflect */
 /* eslint-disable id-length */
@@ -13,17 +24,6 @@
  */
 async function getLedgers(limit = 10, order = 'desc', cursor = 'now') {
 	return new Promise((resolve, reject) => {
-		let config = require('./config')
-		let server
-		let env = config.env
-		let StellarSdk = require('stellar-sdk')
-		if (typeof env != 'undefined' && env === "testnet") {
-			StellarSdk.Network.useTestNetwork()
-			server = new StellarSdk.Server(config.testnet_horizon)
-		} else {
-			StellarSdk.Network.usePublicNetwork()
-			server = new StellarSdk.Server(config.pubnet_horizon)
-		}
 		server.ledgers()
 			.order(order)
 			.limit(limit)
