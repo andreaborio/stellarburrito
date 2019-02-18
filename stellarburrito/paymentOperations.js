@@ -1,3 +1,16 @@
+let config = require('./config')
+let server
+let errorManager = require('./error')
+let memoCreator = require('./memo')
+let env = config.env
+let StellarSdk = require('stellar-sdk')
+if (typeof env != 'undefined' && env === "testnet") {
+    StellarSdk.Network.useTestNetwork()
+    server = new StellarSdk.Server(config.testnet_horizon)
+} else {
+    StellarSdk.Network.usePublicNetwork()
+    server = new StellarSdk.Server(config.pubnet_horizon)
+}
 /**
  * payment function
  * Sender pays receiver an amount of coin.
@@ -10,40 +23,29 @@
  * @param {string} memoType - The type of memo of the transaction that you want create (text,id,return)
  * @param {string} memo - The content of memo of the change trust transaction that you want create (text,id,return)
  */
-async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'native',timeout=15, memoType = 'text', memo = 'def') {
+async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'native', timeout = 15, memoType = 'text', memo = 'def') {
     return new Promise((resolve, reject) => {
-        let config = require('./config')
-        let server
-        let env = config.env
-        let StellarSdk = require('stellar-sdk')
-        if (typeof env != 'undefined' && env === "testnet") {
-            StellarSdk.Network.useTestNetwork()
-            server = new StellarSdk.Server(config.testnet_horizon)
-        } else {
-            StellarSdk.Network.usePublicNetwork()
-            server = new StellarSdk.Server(config.pubnet_horizon)
-        }
         let memoFinal, asset;
-        switch (memoType) {
-            case 'text':
-                memoFinal = StellarSdk.Memo.text(memo)
-                break;
-            case 'id':
-                memoFinal = StellarSdk.Memo.id(memo)
-                break;
-            case 'return':
-                memoFinal = StellarSdk.Memo.return(memo)
-                break;
-            default:
-                reject('StellarBurrito_FORMAT_ERR Invalid memo type')
-                break;
+        memoFinal = memoCreator(memoType, memo)
+        if (memoFinal.error) {
+            reject(memoFinal.memo)
+            return
         }
-
+        memoFinal = memoFinal.memo
+        let des
+        try { des = StellarSdk.Keypair.fromSecret(sender) }
+        catch (err) {
+            reject(errorManager('keyPair', -1))
+            return
+        }
         if (issuer == "native" && assetCode == "native")
             asset = new StellarSdk.Asset.native()
         else
-            asset = new StellarSdk.Asset(assetCode, issuer)
-        let des = StellarSdk.Keypair.fromSecret(sender)
+            try { asset = new StellarSdk.Asset(assetCode, issuer) }
+            catch (err) {
+                reject(err)
+                return
+            }
         server.loadAccount(des.publicKey())
             .then(function (sourceAccount) {
                 let builder = new StellarSdk.TransactionBuilder(sourceAccount)
@@ -71,14 +73,17 @@ async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'nat
                         resolve(result)
                     })
                     .catch(function (error) {
-                        reject('StellarBurrito_TX_ERR ' + error)
+                        if (typeof error.response != 'undefined')
+                            reject(errorManager('payment', error.response.data.extras.result_codes.operations[0]))
+                        else
+                            reject(err)
+                        return
                     })
             })
-            .catch(StellarSdk.NotFoundError, function (error) {
-                reject('StellarBurrito_KEY_ERR The sender account for payment_op doesn\'t exists.')
+            .catch((error) => {
+                console.log(error)
+                reject(errorManager('loadAccount', -1))
             })
     })
 }
-module.exports = {
-    Pay
-}
+module.exports = Pay 

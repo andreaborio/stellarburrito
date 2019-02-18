@@ -14,14 +14,14 @@ if (typeof env != 'undefined' && env === "testnet") {
  * retrive account from horizon
  * @param {string} pubKey - The publicKey of the account
  */
-async function getOrderbook(sellingCode = 'native', sellingIssuer = 'native', buyingCode = 'native', buyingIssuer = 'native',limit=10) {
+async function getOrderbook(sellingCode = 'native', sellingIssuer = 'native', buyingCode = 'native', buyingIssuer = 'native', limit = '10') {
 	return new Promise((resolve, reject) => {
 		let sellingAsset
 		try {
 			if (sellingIssuer === 'native')
 				sellingAsset = new StellarSdk.Asset.native()
 			else
-			sellingAsset = new StellarSdk.Asset(sellingCode, sellingIssuer)
+				sellingAsset = new StellarSdk.Asset(sellingCode, sellingIssuer)
 		} catch (err) {
 			reject(err)
 			return
@@ -31,14 +31,14 @@ async function getOrderbook(sellingCode = 'native', sellingIssuer = 'native', bu
 			if (buyingIssuer === 'native')
 				buyingAsset = new StellarSdk.Asset.native()
 			else
-			buyingAsset = new StellarSdk.Asset(buyingCode, buyingIssuer)
+				buyingAsset = new StellarSdk.Asset(buyingCode, buyingIssuer)
 		} catch (err) {
 			reject(err)
 			return
 		}
-		server.orderbook(buyingAsset,sellingAsset)
-			.call()
+		server.orderbook(buyingAsset, sellingAsset)
 			.limit(limit)
+			.call()
 			.then(function (page) {
 				resolve(page)
 			})
@@ -48,4 +48,4 @@ async function getOrderbook(sellingCode = 'native', sellingIssuer = 'native', bu
 			})
 	})
 }
-module.exports = { getOrderbook }
+module.exports =  getOrderbook 

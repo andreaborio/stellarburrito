@@ -1,16 +1,16 @@
-let error = require('./error')
-let memoc = require('./memo')
+let errorManager = require('./error')
+let memoCreator= require('./memo')
 let StellarSdk = require('stellar-sdk')
-    let config = require('./config')
-    let server
-    let env = config.env
-    if (typeof env != 'undefined' && env === "testnet") {
-      server = new StellarSdk.Server(config.testnet_horizon)
-      StellarSdk.Network.useTestNetwork()
-    } else {
-      server = new StellarSdk.Server(config.pubnet_horizon)
-      StellarSdk.Network.usePublicNetwork()
-    }
+let config = require('./config')
+let server
+let env = config.env
+if (typeof env != 'undefined' && env === "testnet") {
+  server = new StellarSdk.Server(config.testnet_horizon)
+  StellarSdk.Network.useTestNetwork()
+} else {
+  server = new StellarSdk.Server(config.pubnet_horizon)
+  StellarSdk.Network.usePublicNetwork()
+}
 /* eslint-disable no-unused-vars */
 /**
  * @author Andrea Borio andrea.borio(at)outlook.com
@@ -32,27 +32,27 @@ let StellarSdk = require('stellar-sdk')
 
 async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'default', startingBalance = '1.501', timeout = 15, memoTypeTrust = 'text', memoTrust = 'default', issuer = 'unsetted', assetCode = 'unsetted', trustLimit = 'unsetted') {
   return new Promise((resolve, reject) => {
-    
-    let memoFinalCreate = memoc.memoCreator(memoTypeCreate, memoCreate)
+
+    let memoFinalCreate = memoCreator(memoTypeCreate, memoCreate)
     if (memoFinalCreate.error) {
       reject(memoFinalCreate.memo)
       return
     }
     if (startingBalance < config.base_reserve) {
-      reject(error.errorManager('createAccount', -3))
+      reject(errorManager('createAccount', -3))
       return
     }
     memoFinalCreate = memoFinalCreate.memo
     let des
     try { des = StellarSdk.Keypair.fromSecret(privKey) }
     catch (err) {
-      reject(error.errorManager('keyPair', -1))
+      reject(errorManager('keyPair', -1))
       return
     }
     let newAccount = StellarSdk.Keypair.random()
     server.loadAccount(des.publicKey())
       .catch(StellarSdk.NotFoundError, function (error) {
-        reject(error.errorManager('loadAccount', -1) + ' your private key')
+        reject(errorManager('loadAccount', -1) + ' your private key')
         return
       })
       .then(function (sourceAccount) {
@@ -70,7 +70,7 @@ async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'def
       .then(function (result) {
         server.loadAccount(newAccount.publicKey())
           .catch(StellarSdk.NotFoundError, function (err) {
-            reject(error.errorManager('createAccount', -5))
+            reject(errorManager('createAccount', -5))
             return
           })
           .then(function (sourceAccount) {
@@ -87,15 +87,18 @@ async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'def
                   "privateKey": newAccount.secret()
                 })
               })
-              .catch(function (error) {
-                reject('Tx error_' + error)
+              .catch(function (err) {
+                if (typeof err.response != 'undefined')
+                  reject(errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
+                else
+                  reject(err)
                 return
               })
           })
       })
       .catch(function (err) {
         console.log
-        reject(error.errorManager('createAccount', err.response.data.extras.result_codes.operations[0]))
+        reject(errorManager('createAccount', err.response.data.extras.result_codes.operations[0]))
         return
       })
   })
@@ -116,11 +119,11 @@ async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'def
 
 async function changeTrust(privKey, issuer, assetCode, trustLimit, timeout = 15) {
   return new Promise((resolve, reject) => {
-    
+
     let des = StellarSdk.Keypair.fromSecret(privKey)
     server.loadAccount(des.publicKey())
       .catch(StellarSdk.NotFoundError, function (error) {
-        reject(error.errorManager('loadAccount', -1) + ' your private key')
+        reject(errorManager('loadAccount', -1) + ' your private key')
         return
       })
       .then(function (sourceAccount) {
@@ -144,7 +147,7 @@ async function changeTrust(privKey, issuer, assetCode, trustLimit, timeout = 15)
       })
       .catch(function (err) {
         if (typeof err.response != 'undefined')
-          reject(error.errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
+          reject(errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
         else
           reject(err)
         return
@@ -165,11 +168,11 @@ async function changeTrust(privKey, issuer, assetCode, trustLimit, timeout = 15)
 
 async function mergeAccount(privKey, destination, timeout = 15) {
   return new Promise((resolve, reject) => {
-   
+
     let des = StellarSdk.Keypair.fromSecret(privKey)
     server.loadAccount(des.publicKey())
       .catch(StellarSdk.NotFoundError, function (error) {
-        reject(error.errorManager('loadAccount', -1) + ' your private key')
+        reject(errorManager('loadAccount', -1) + ' your private key')
         return
       })
       .then(function (sourceAccount) {
@@ -187,7 +190,7 @@ async function mergeAccount(privKey, destination, timeout = 15) {
       })
       .catch(function (error) {
         if (typeof err.response != 'undefined')
-          reject(error.errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
+          reject(errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
         else
           reject(err)
         return
@@ -211,7 +214,7 @@ async function manageData(privKey, name, value, timeout = 15) {
     let des = StellarSdk.Keypair.fromSecret(privKey)
     server.loadAccount(des.publicKey())
       .catch(StellarSdk.NotFoundError, function (error) {
-        reject(error.errorManager('loadAccount', -1) + ' your private key')
+        reject(errorManager('loadAccount', -1) + ' your private key')
         return
       })
       .then(function (sourceAccount) {
@@ -230,7 +233,7 @@ async function manageData(privKey, name, value, timeout = 15) {
       })
       .catch(function (error) {
         if (typeof err.response != 'undefined')
-          reject(error.errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
+          reject(errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
         else
           reject(err)
       })
@@ -241,7 +244,7 @@ async function manageData(privKey, name, value, timeout = 15) {
 
 
 
-//TODO MergeAccount, createMultipleAccount,Trust Multiple asset
+//TODO createMultipleAccount,Trust Multiple asset
 module.exports = {
   createAccount,
   changeTrust,

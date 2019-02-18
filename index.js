@@ -1,5 +1,5 @@
 var ao = require('./stellarburrito/accountOperations.js')
-var pay = require('./stellarburrito/paymentOperations.js')
+var pay = require('./stellarburrito/paymentOperations')
 var assetop = require('./stellarburrito/assetOperations.js')
 let dest = ['GDZKL2BWHMGBDBPPHZGQ4RQNQBT52U266BM6TODZLWAUNNIWC43ZODJQ', 'GB7LEV7ZBSRW5WEJ5NYCDAHK3VFH2QKP5SBZEV3SQNCVFX7TKSET2GDV']
 let distributor = 'SCNIYIP6WLTJYOXBQVAWQQJMYIXIIAGFKEJDAZPY4T5FUZL2OODV5PNR'
@@ -21,8 +21,18 @@ let referto = 'SBA2UF6QKW2AZVDURNUOHGYPQ7TZCND5LJHXQZYOONJC6WOS65LDNLCU'
 let refertoPair = sb.StellarSdk.Keypair.fromSecret(referto)
 let utentePair = sb.StellarSdk.Keypair.fromSecret(utente)
 async function f1() {
-  console.log(JSON.stringify(await obx.getOrderbook('BTC','GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P')))
- /* try {
+ // console.log(JSON.stringify(await obx.getOrderbook('BTC','GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P')))
+  //console.log(JSON.stringify(await assetop.getAssets(1,200)))
+  try{
+  let res =await pay('SAOUNYUBZDO3T3BIS2TC4W3TD6T5K5LQMQYKYQHJZYCEVS2KEG52OWA4','GDSQT7FFLLVVU2KW33D52DIOGDGPXCK5HVHMLOBAF6YY5VKUKFFETFXF','1000000000')
+  console.log(res)
+  }
+  catch(error){
+    console.log(error)
+  }
+
+
+  /* try {
 
 
     let ciao = await ao.changeTrust(distributor, 'GDRBK5RZFLBDQYJNJF2X4VMJ6RE4OTESND6KABIJRLFVO5MNYU6VNKF7', 'jjjjjjj', '300000000000021321')

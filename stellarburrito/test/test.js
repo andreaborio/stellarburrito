@@ -1,7 +1,7 @@
 const accountOperations = require('../accountOperations')
 const accountStatus = require('../accountStatus')
 const assetOperations = require('../assetOperations')
-const paymentOperations = require('../paymentOperations')
+const Pay = require('../paymentOperations')
 const offerOperations = require('../offerOperations')
 const history = require('../history')
 const ledgers = require('../ledger')
@@ -19,6 +19,8 @@ let distributor = 'SCNIYIP6WLTJYOXBQVAWQQJMYIXIIAGFKEJDAZPY4T5FUZL2OODV5PNR'
 let issuer = 'SCYTGAZEMS4Y3EUX2DBAKQPVX6AK4N6OMIKJQXYCRFC573DAECWLFYYY'
 let distributorPair = StellarSdk.Keypair.fromSecret(distributor)
 let issuerPair = StellarSdk.Keypair.fromSecret(issuer)
+let carl=StellarSdk.Keypair.fromSecret('SA74HZ5F5PIJWH26QBYXCKGHRMNB4VRMMPSVCWTYA4UZBBJX6TZZ5CIZ')
+let donald=StellarSdk.Keypair.fromSecret('SAIOAGOJCGBGI73CGWLUDZZPZQWJW75PYGGD2OOD6NIS2TTCNF7QY7YX')
 console.log(alice.publicKey())
 let privKeyCreate = ''
 let asset =""
@@ -83,7 +85,7 @@ step('assetOperations', function () {
     describe('Create new asset', () => {
         it('assetOperations.createAsset', (done) => {
             asset=random()
-            const resolvingPromise = assetOperations.createAsset( alice.secret(),bob.secret(), '100000', asset)
+            const resolvingPromise = assetOperations.createAsset( carl.secret(),donald.secret(), '100000', asset)
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -94,14 +96,16 @@ step('assetOperations', function () {
 step('paymentOperations', function () {
     describe('Pay from alice to bob', () => {
         it('paymentOperations.Pay', (done) => {
-            const resolvingPromise = paymentOperations.Pay(alice.secret(), bob.publicKey(), '0.0000001')
+            const resolvingPromise = Pay(carl.secret(), donald.publicKey(), '0.000001')
             resolvingPromise.then((result) => {
+                console.log(result)
                 expect(1).to.equal(1);
                 done();
             })
+            .catch(err=>{console.log(err)})
         }).timeout(30000)
     })
-})
+})//xJ92RKSDMYxF
 step('history', function () {
     describe('Get payments history', () => {
         it('history.paymentHistory', (done) => {
@@ -138,10 +142,10 @@ step('ledger', function () {
 step('offerOperations', function () {
     describe('Create Passive Offer', () => {
         it('offerOperations.createPassiveOffer', (done) => {
-            const resolvingPromise = offerOperations.createPassiveOffer(bob.secret(), asset, alice.publicKey(), '1', {
+            const resolvingPromise = offerOperations.createPassiveOffer(donald.secret(), asset, carl.publicKey(), '1', {
                 'd': 1,
                 'n': 1
-            }, '0', '0wz05f6gUftu', alice.publicKey())
+            }, '0', 'xJ92RKSDMYxF', carl.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -152,10 +156,10 @@ step('offerOperations', function () {
 step('offerOperations', function () {
     describe('Manage Offer', () => {
         it('offerOperations.createPassiveOffer', (done) => {
-            const resolvingPromise = offerOperations.manageOffer(bob.secret(), asset, alice.publicKey(), '1', {
+            const resolvingPromise = offerOperations.manageOffer(donald.secret(), asset, carl.publicKey(), '1', {
                 'd': 1,
                 'n': 1
-            }, '0', '0wz05f6gUftu', alice.publicKey())
+            }, '0', 'xJ92RKSDMYxF', carl.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -276,7 +280,7 @@ step('account Status', function () {
 step('account Options', function () {
     describe('Set Flag ', () => {
         it('accountOptions.setFlag', (done) => {
-            const resolvingPromise = accountOptions.setFlag(alice.secret(),1)
+            const resolvingPromise = accountOptions.setFlag(carl.secret(),1)
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -288,7 +292,7 @@ step('account Options', function () {
 step('account Options', function () {
     describe('Clear Flag ', () => {
         it('accountOptions.clearFlags', (done) => {
-            const resolvingPromise = accountOptions.clearFlags(alice.secret(),1)
+            const resolvingPromise = accountOptions.clearFlag(carl.secret(),1)
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();

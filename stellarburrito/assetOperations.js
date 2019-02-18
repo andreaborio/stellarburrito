@@ -1,3 +1,16 @@
+let config = require('./config')
+let server
+let env = config.env
+let StellarSdk = require('stellar-sdk')
+let accountop = require('./accountOperations')
+let Pay= require('./paymentOperations')
+if (typeof env != 'undefined' && env === "testnet") {
+    StellarSdk.Network.useTestNetwork()
+    server = new StellarSdk.Server(config.testnet_horizon)
+} else {
+    StellarSdk.Network.usePublicNetwork()
+    server = new StellarSdk.Server(config.pubnet_horizon)
+}
 /* eslint-disable new-cap */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
@@ -17,21 +30,11 @@
  */
 async function createAsset(issuer, distributor, amount, assetCode, memoTypeTrust = 'text', memoTrust = 'default', memoTypePay = 'text', memoPay = 'default') {
     return new Promise((resolve, reject) => {
-        let accountop = require('./accountOperations')
-        let paymentop = require('./paymentOperations')
-        let config = require('./config')
-        let env = config.env
-        let StellarSdk = require('stellar-sdk')
-        if (typeof env != 'undefined' && env === "testnet") {
-            StellarSdk.Network.useTestNetwork()
-        } else {
-            StellarSdk.Network.usePublicNetwork()
-        }
         issuer = StellarSdk.Keypair.fromSecret(issuer)
         distributor = StellarSdk.Keypair.fromSecret(distributor)
-        accountop.changeTrust(distributor.secret(), issuer.publicKey(), assetCode, amount,15, memoTypeTrust, memoTrust)
+        accountop.changeTrust(distributor.secret(), issuer.publicKey(), assetCode, amount, 15, memoTypeTrust, memoTrust)
             .then(function (res) {
-                paymentop.Pay(issuer.secret(), distributor.publicKey(), amount, assetCode, issuer.publicKey(),15, memoTypePay, memoPay)
+                Pay(issuer.secret(), distributor.publicKey(), amount, assetCode, issuer.publicKey(), 15, memoTypePay, memoPay)
                     .then(function (res) {
                         resolve('Asset created')
                     })
@@ -44,6 +47,66 @@ async function createAsset(issuer, distributor, amount, assetCode, memoTypeTrust
             })
     })
 }
+/**
+ * @param {Number} cursor - Use as page index for explore all assets
+ * @param {Number} limit  - How much assets you want back
+ */
+async function getAssets(cursor = 1, limit = 10) {
+    return new Promise((resolve, reject) => {
+        server.assets()
+            .limit(limit)
+            .cursor(cursor)
+            .call()
+            .then(function (page) {
+                resolve(page)
+            })
+            .catch(function (error) {
+                reject(error)
+            })
+    })
+}
+/**
+ * @param {Number} assetCode  - Asset code
+ * @param {string} assetIssuer - Asset Issuer
+ */
+async function getAssetInfo(assetCode, assetIssuer) {
+    return new Promise((resolve, reject) => {
+        let asset
+        try {
+            asset = new StellarSdk.Asset(assetCode, assetIssuer)
+        } catch (err) {
+            reject(err)
+            return
+        }
+        server.assets()
+            .call()
+            .then(function (page) {
+                resolve(page)
+            })
+            .catch(function (error) {
+                reject(error)
+            })
+    })
+}
+/**
+ * @param {string} assetIssuer - Asset Issuer
+ */
+async function getAssetsForIssuer(assetIssuer) {
+    return new Promise((resolve, reject) => {
+        server.assets()
+            .forIssuer(assetIssuer)
+            .call()
+            .then(function (page) {
+                resolve(page)
+            })
+            .catch(function (error) {
+                reject(error)
+            })
+    })
+}
 module.exports = {
-    createAsset
+    createAsset,
+    getAssets,
+    getAssetInfo,
+    getAssetsForIssuer
 }

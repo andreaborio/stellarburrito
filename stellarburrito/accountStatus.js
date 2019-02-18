@@ -1,24 +1,21 @@
+let config = require('./config')
+let server
+let env = config.env
+let StellarSdk = require('stellar-sdk')
+if (typeof env != 'undefined' && env === "testnet") {
+	StellarSdk.Network.useTestNetwork()
+	server = new StellarSdk.Server(config.testnet_horizon)
+} else {
+	StellarSdk.Network.usePublicNetwork()
+	server = new StellarSdk.Server(config.pubnet_horizon)
+}
 /**
- * 
- * 
- * 
  * getAccount
  * retrive account from horizon
  * @param {string} pubKey - The publicKey of the account
  */
 async function getAccount(pubKey) {
 	return new Promise((resolve, reject) => {
-		let config = require('./config')
-		let server
-		let env = config.env
-		let StellarSdk = require('stellar-sdk')
-		if (typeof env != 'undefined' && env === "testnet") {
-			StellarSdk.Network.useTestNetwork()
-			server = new StellarSdk.Server(config.testnet_horizon)
-		} else {
-			StellarSdk.Network.usePublicNetwork()
-			server = new StellarSdk.Server(config.pubnet_horizon)
-		}
 		server.accounts()
 			.accountId(pubKey)
 			.call()
@@ -27,6 +24,7 @@ async function getAccount(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 	})
 }
@@ -48,6 +46,7 @@ async function getBalances(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 
 	})
@@ -61,14 +60,15 @@ async function getTrustlines(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
 			.then(page => {
-				let assets = {assets: []}
+				let assets = { assets: [] }
 				for (let i = 0; i < page.balances.length; i++)
-					if(typeof page.balances[i].asset_issuer!='undefined')
-					assets.assets.push({asset_code:page.balances[i].asset_code,asset_issuer:page.balances[i].asset_issuer})
+					if (typeof page.balances[i].asset_issuer != 'undefined')
+						assets.assets.push({ asset_code: page.balances[i].asset_code, asset_issuer: page.balances[i].asset_issuer })
 				resolve(assets)
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 
 	})
@@ -82,16 +82,32 @@ async function getData(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
 			.then(page => {
-				let i=0
-				/*let data={data:[]}
-				while(i<page.data_attr.length){
-					data.data.push(page.data_attr[i])
-					i++
-				}*/
 				resolve(page.data_attr)
 			})
 			.catch(function (error) {
 				reject(error)
+				return
+			})
+
+	})
+}
+/**
+ * getOffers
+ * retrive account's offers from horizon
+ * @param {string} pubKey - The publicKey of the account
+ * @param {number} limit - How much offer you want back 
+ */
+async function getOffers(pubKey, limit = 10) {
+	return new Promise((resolve, reject) => {
+		server.offers('accounts', pubKey)
+			.limit(limit)
+			.call()
+			.then(page => {
+				resolve(page)
+			})
+			.catch(function (error) {
+				reject(error)
+				return
 			})
 
 	})
@@ -109,6 +125,7 @@ async function getThresholds(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 
 	})
@@ -131,6 +148,7 @@ async function getSigners(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 
 	})
@@ -165,6 +183,7 @@ async function getInflationDestination(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 
 	})
@@ -182,6 +201,7 @@ async function getHomeDomain(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 
 	})
@@ -199,6 +219,7 @@ async function getSequenceNumber(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 
 	})
@@ -213,5 +234,6 @@ module.exports = {
 	getHomeDomain,
 	getData,
 	getSequenceNumber,
-	getTrustlines
+	getTrustlines,
+	getOffers
 }
