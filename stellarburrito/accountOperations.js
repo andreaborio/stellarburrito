@@ -1,16 +1,16 @@
 let errorManager = require('./error')
-let memoCreator= require('./memo')
+let memoCreator = require('./memo')
 let StellarSdk = require('stellar-sdk')
-let config = require('./config')
-let server
-let env = config.env
-if (typeof env != 'undefined' && env === "testnet") {
-  server = new StellarSdk.Server(config.testnet_horizon)
-  StellarSdk.Network.useTestNetwork()
-} else {
-  server = new StellarSdk.Server(config.pubnet_horizon)
-  StellarSdk.Network.usePublicNetwork()
-}
+    let config = require('./config')
+    let server
+    let env = config.env
+    if (typeof env != 'undefined' && env === "testnet") {
+      server = new StellarSdk.Server(config.testnet_horizon)
+      StellarSdk.Network.useTestNetwork()
+    } else {
+      server = new StellarSdk.Server(config.pubnet_horizon)
+      StellarSdk.Network.usePublicNetwork()
+    }
 /* eslint-disable no-unused-vars */
 /**
  * @author Andrea Borio andrea.borio(at)outlook.com
@@ -30,10 +30,10 @@ if (typeof env != 'undefined' && env === "testnet") {
  * @param {string} trustLimit - The amount of coin that you want to trust from this issuer
  */
 
-async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'default', startingBalance = '1.501', timeout = 15, memoTypeTrust = 'text', memoTrust = 'default', issuer = 'unsetted', assetCode = 'unsetted', trustLimit = 'unsetted') {
+async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'default', startingBalance = '1.501', memoTypeTrust = 'text', memoTrust = 'default', issuer = 'unsetted', assetCode = 'unsetted', trustLimit = 'unsetted') {
   return new Promise((resolve, reject) => {
-
-    let memoFinalCreate = memoCreator(memoTypeCreate, memoCreate)
+    
+    let memoFinalCreate =memoCreator(memoTypeCreate, memoCreate)
     if (memoFinalCreate.error) {
       reject(memoFinalCreate.memo)
       return
@@ -62,7 +62,6 @@ async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'def
             startingBalance
           }))
           .addMemo(memoFinalCreate)
-          .setTimeout(timeout)
           .build();
         transaction.sign(des);
         return server.submitTransaction(transaction)
@@ -87,19 +86,21 @@ async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'def
                   "privateKey": newAccount.secret()
                 })
               })
-              .catch(function (err) {
-                if (typeof err.response != 'undefined')
-                  reject(errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
-                else
-                  reject(err)
-                return
+              .catch(function (error) {
+                if (typeof error.response != 'undefined')
+                reject(errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
+              else
+                reject(error)
+              return
               })
           })
       })
       .catch(function (err) {
-        console.log
+        if (typeof err.response != 'undefined')
         reject(errorManager('createAccount', err.response.data.extras.result_codes.operations[0]))
-        return
+            else
+        reject(err)
+      return
       })
   })
 }
@@ -117,9 +118,9 @@ async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'def
  * 
  */
 
-async function changeTrust(privKey, issuer, assetCode, trustLimit, timeout = 15) {
+async function changeTrust(privKey, issuer, assetCode, trustLimit) {
   return new Promise((resolve, reject) => {
-
+    
     let des = StellarSdk.Keypair.fromSecret(privKey)
     server.loadAccount(des.publicKey())
       .catch(StellarSdk.NotFoundError, function (error) {
@@ -137,7 +138,6 @@ async function changeTrust(privKey, issuer, assetCode, trustLimit, timeout = 15)
             asset,
             limit: trustLimit
           }))
-          .setTimeout(timeout)
           .build();
         transaction.sign(des);
         return server.submitTransaction(transaction)
@@ -166,9 +166,8 @@ async function changeTrust(privKey, issuer, assetCode, trustLimit, timeout = 15)
  * 
  */
 
-async function mergeAccount(privKey, destination, timeout = 15) {
+async function mergeAccount(privKey, destination) {
   return new Promise((resolve, reject) => {
-
     let des = StellarSdk.Keypair.fromSecret(privKey)
     server.loadAccount(des.publicKey())
       .catch(StellarSdk.NotFoundError, function (error) {
@@ -180,7 +179,6 @@ async function mergeAccount(privKey, destination, timeout = 15) {
           .addOperation(StellarSdk.Operation.accountMerge({
             destination
           }))
-          .setTimeout(timeout)
           .build();
         transaction.sign(des);
         return server.submitTransaction(transaction)
@@ -189,14 +187,12 @@ async function mergeAccount(privKey, destination, timeout = 15) {
         resolve(result)
       })
       .catch(function (error) {
-        if (typeof err.response != 'undefined')
+        if (typeof error.response != 'undefined')
           reject(errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
         else
           reject(err)
         return
       })
-
-
   })
 }
 /**
@@ -223,7 +219,6 @@ async function manageData(privKey, name, value, timeout = 15) {
             name,
             value
           }))
-          .setTimeout(timeout)
           .build();
         transaction.sign(des);
         return server.submitTransaction(transaction)
@@ -232,19 +227,14 @@ async function manageData(privKey, name, value, timeout = 15) {
         resolve(result)
       })
       .catch(function (error) {
-        if (typeof err.response != 'undefined')
+        if (typeof error.response != 'undefined')
           reject(errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
         else
-          reject(err)
+          reject(error)
       })
-
-
   })
 }
-
-
-
-//TODO createMultipleAccount,Trust Multiple asset
+//TODO MergeAccount, createMultipleAccount,Trust Multiple asset
 module.exports = {
   createAccount,
   changeTrust,

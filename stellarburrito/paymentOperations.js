@@ -23,7 +23,7 @@ if (typeof env != 'undefined' && env === "testnet") {
  * @param {string} memoType - The type of memo of the transaction that you want create (text,id,return)
  * @param {string} memo - The content of memo of the change trust transaction that you want create (text,id,return)
  */
-async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'native', timeout = 15, memoType = 'text', memo = 'def') {
+async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'native', memoType = 'text', memo = 'default') {
     return new Promise((resolve, reject) => {
         let memoFinal, asset;
         memoFinal = memoCreator(memoType, memo)
@@ -64,7 +64,6 @@ async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'nat
                         }))
                     }
                 }
-                builder.setTimeout(timeout)
                 builder.addMemo(memoFinal)
                 let transaction = builder.build()
                 transaction.sign(des)
@@ -73,6 +72,7 @@ async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'nat
                         resolve(result)
                     })
                     .catch(function (error) {
+                        console.log(error)
                         if (typeof error.response != 'undefined')
                             reject(errorManager('payment', error.response.data.extras.result_codes.operations[0]))
                         else
@@ -83,6 +83,7 @@ async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'nat
             .catch((error) => {
                 console.log(error)
                 reject(errorManager('loadAccount', -1))
+                return
             })
     })
 }

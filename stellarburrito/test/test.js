@@ -24,7 +24,7 @@ let donald=StellarSdk.Keypair.fromSecret('SAIOAGOJCGBGI73CGWLUDZZPZQWJW75PYGGD2O
 console.log(alice.publicKey())
 let privKeyCreate = ''
 let asset =""
-console.log(bob.publicKey()+' '+alice.publicKey())
+console.log(carl.publicKey()+' '+donald.publicKey())
 function random() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -98,7 +98,6 @@ step('paymentOperations', function () {
         it('paymentOperations.Pay', (done) => {
             const resolvingPromise = Pay(carl.secret(), donald.publicKey(), '0.000001')
             resolvingPromise.then((result) => {
-                console.log(result)
                 expect(1).to.equal(1);
                 done();
             })
@@ -145,7 +144,7 @@ step('offerOperations', function () {
             const resolvingPromise = offerOperations.createPassiveOffer(donald.secret(), asset, carl.publicKey(), '1', {
                 'd': 1,
                 'n': 1
-            }, '0', 'xJ92RKSDMYxF', carl.publicKey())
+            }, '0')
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -159,7 +158,7 @@ step('offerOperations', function () {
             const resolvingPromise = offerOperations.manageOffer(donald.secret(), asset, carl.publicKey(), '1', {
                 'd': 1,
                 'n': 1
-            }, '0', 'xJ92RKSDMYxF', carl.publicKey())
+            }, '0', 'u28qamPiB9Ze', carl.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();

@@ -19,7 +19,7 @@ if (typeof env != 'undefined' && env === "testnet") {
  * Sender pays receiver an amount of coin.
  * you can specify more than one receiver and use custom asset and custom memo
  * @param {string} issuer - The private key of the issuer.      
- * @param {string} distributor - The public key of the distributor
+ * @param {string} distributor - The secret key of the distributor
  * @param {string} amount - The amount of coins that sender pays to receiver 
  * @param {string} assetCode - The assetCode of the asset that you want to trust
  * @param {string} issuer - The amount of coin that you want to trust from this issuer
@@ -32,18 +32,21 @@ async function createAsset(issuer, distributor, amount, assetCode, memoTypeTrust
     return new Promise((resolve, reject) => {
         issuer = StellarSdk.Keypair.fromSecret(issuer)
         distributor = StellarSdk.Keypair.fromSecret(distributor)
-        accountop.changeTrust(distributor.secret(), issuer.publicKey(), assetCode, amount, 15, memoTypeTrust, memoTrust)
+        accountop.changeTrust(distributor.secret(), issuer.publicKey(), assetCode, amount, memoTypeTrust, memoTrust)
             .then(function (res) {
-                Pay(issuer.secret(), distributor.publicKey(), amount, assetCode, issuer.publicKey(), 15, memoTypePay, memoPay)
+                Pay(issuer.secret(), distributor.publicKey(), amount, assetCode, issuer.publicKey(), memoTypePay, memoPay)
                     .then(function (res) {
                         resolve('Asset created')
                     })
                     .catch(function (err) {
+                        console.log(err)
                         reject('StellarBurrito_TX_ERR payment error, check keys\n\r' + err)
+                        return
                     })
             })
             .catch(function (err) {
                 reject('StellarBurrito_TX_ERR trust_op error\n\r' + err)
+                return
             })
     })
 }

@@ -20,14 +20,14 @@ if (typeof env != 'undefined' && env === "testnet") {
  * @param {string} sellingCode -Asset code that you want to sell
  * @param {string} sellingIssuer - Issuer's publicKey of the Asset that you want to sell
  * @param {string} amount - The amount of coin that you want to sell
- * @param {string} price - Issuer's publicKey of the Asset that you want to sell
+ * @param {JSON} price - Issuer's publicKey of the Asset that you want to sell
  * @param {string} offerId - If 0 create new offer
  * @param {string} buyingCode - Asset code that you want to buy
  * @param {string} buyingIssuer - Issuer's publicKey of the Asset that you want to sell
  * @param {string} source - The source account (defaults to transaction source).
  * @returns {JSON} result
  */
-async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer = 'native', amount = '0', price = 1, offerId = '0', buyingCode = 'native', buyingIssuer = 'native', timeout = 15, source = 'unsetted') {
+async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer = 'native', amount = '0', price = {'d': 1,'n': 1}, offerId = '0', buyingCode = 'native', buyingIssuer = 'native', source = 'unsetted') {
     return new Promise((resolve, reject) => {
         let buying, selling, des
         try {
@@ -55,7 +55,6 @@ async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer
                         price,
                         offerId
                     }))
-                    .setTimeout(timeout)
                     .build()
                 builder.sign(des)
                 server.submitTransaction(builder)
@@ -71,7 +70,6 @@ async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer
                     })
             })
             .catch((error) => {
-                console.log(error)
                 reject(errorManager('loadAccount', -1))
             })
     })
@@ -84,14 +82,14 @@ async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer
  * @param {string} sellingCode -Asset code that you want to sell
  * @param {string} sellingIssuer - Issuer's publicKey of the Asset that you want to sell
  * @param {string} amount - The total amount youre selling. If 0, deletes the offer
- * @param {string} price - Price of 1 unit of selling in terms of buying.
+ * @param {JSON} price - Price of 1 unit of selling in terms of buying.
  * @param {string} offerId - OfferID if 0 create new offer
  * @param {string} buyingCode - Asset code that you want to buy
  * @param {string} buyingIssuer - Issuer's publicKey of the Asset that you want to sell
  * @param {string} source - The source account (defaults to transaction source).
  * @return {JSON} result
  */
-async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', price = '1', offerId = '0', buyingCode = 'native', buyingIssuer = 'native', timeout = 15, source = 'unsetted') {
+async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', price = {'d': 1,'n': 1}, offerId = '0', buyingCode = 'native', buyingIssuer = 'native', source = 'unsetted') {
     return new Promise((resolve, reject) => {
         let buying, selling, des
         try {
@@ -119,7 +117,6 @@ async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', pr
                         price,
                         offerId
                     }))
-                    .setTimeout(timeout)
                     .build()
                 builder.sign(des)
                 server.submitTransaction(builder)
