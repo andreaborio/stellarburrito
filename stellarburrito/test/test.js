@@ -5,7 +5,7 @@ const Pay = require('../paymentOperations')
 const offerOperations = require('../offerOperations')
 const history = require('../history')
 const ledgers = require('../ledger')
-const accountOptions=require('../accountOptions')
+const accountOptions = require('../accountOptions')
 const config = require('../config')
 const StellarSdk = require('stellar-sdk')
 const chai = require('chai')
@@ -19,12 +19,10 @@ let distributor = 'SCNIYIP6WLTJYOXBQVAWQQJMYIXIIAGFKEJDAZPY4T5FUZL2OODV5PNR'
 let issuer = 'SCYTGAZEMS4Y3EUX2DBAKQPVX6AK4N6OMIKJQXYCRFC573DAECWLFYYY'
 let distributorPair = StellarSdk.Keypair.fromSecret(distributor)
 let issuerPair = StellarSdk.Keypair.fromSecret(issuer)
-let carl=StellarSdk.Keypair.fromSecret('SA74HZ5F5PIJWH26QBYXCKGHRMNB4VRMMPSVCWTYA4UZBBJX6TZZ5CIZ')
-let donald=StellarSdk.Keypair.fromSecret('SAIOAGOJCGBGI73CGWLUDZZPZQWJW75PYGGD2OOD6NIS2TTCNF7QY7YX')
-console.log(alice.publicKey())
+let carl = StellarSdk.Keypair.fromSecret('SA74HZ5F5PIJWH26QBYXCKGHRMNB4VRMMPSVCWTYA4UZBBJX6TZZ5CIZ')
+let donald = StellarSdk.Keypair.fromSecret('SAIOAGOJCGBGI73CGWLUDZZPZQWJW75PYGGD2OOD6NIS2TTCNF7QY7YX')
 let privKeyCreate = ''
-let asset =""
-console.log(carl.publicKey()+' '+donald.publicKey())
+let asset = ""
 function random() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -32,114 +30,155 @@ function random() {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
 }
-
-step('accountOperations', function () {
-    describe('Create new account', () => {
+    step('Create new account', () => {
+        describe('StellarBurrito test',function (){
         it('accountOperations.createAccount', (done) => {
-            const resolvingPromise = accountOperations.createAccount(config.testaccount)
+            const resolvingPromise =  accountOperations.createAccount(config.testaccount)
             resolvingPromise.then((result) => {
                 privKeyCreate = result.privateKey
                 expect(1).to.equal(1);
                 done();
             })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
         }).timeout(30000)
     })
 })
-step('accountOperations', function () {
-    describe('Trust new asset', () => {
+
+    step('Trust new asset', () => {
+        describe('StellarBurrito test',function (){
         it('accountOperations.changeTrust', (done) => {
             const resolvingPromise = accountOperations.changeTrust(alice.secret(), 'GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P', 'ETH', '1')
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
             })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
         }).timeout(30000)
     })
 })
-step('accountOperations', function () {
-    describe('Manage Data', () => {
+    step('Manage Data', () => {
+        describe('StellarBurrito test',function (){
         it('accountOperations.manageData', (done) => {
             accountOperations.manageData(alice.secret(), 'stellar', 'burrito')
                 .then((result) => {
                     expect(1).to.equal(1);
                     done()
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.log(error)
+                    expect(1).to.equal(4)
+                    done()
                 })
         }).timeout(25000)
     })
 })
-step('accountOperations', function () {
-    describe('Merge account', () => {
+    step('Merge account', () => {
+        describe('StellarBurrito test',function (){
         it('accountOperations.mergeAccount', (done) => {
             const resolvingPromise = accountOperations.mergeAccount(privKeyCreate, alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
             })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
         }).timeout(30000)
     })
-})
-step('assetOperations', function () {
-    describe('Create new asset', () => {
+    })
+    step('Create new asset', () => {
+        describe('StellarBurrito test',function (){
         it('assetOperations.createAsset', (done) => {
-            asset=random()
-            const resolvingPromise = assetOperations.createAsset( carl.secret(),donald.secret(), '100000', asset)
+            asset = random()
+            const resolvingPromise = assetOperations.createAsset(carl.secret(), donald.secret(), '100000', asset)
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
             })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
         }).timeout(30000)
     })
 })
-step('paymentOperations', function () {
-    describe('Pay from alice to bob', () => {
+    step('Pay from alice to bob', () => {
         it('paymentOperations.Pay', (done) => {
+            describe('StellarBurrito test',function (){
             const resolvingPromise = Pay(carl.secret(), donald.publicKey(), '0.000001')
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
             })
-            .catch(err=>{console.log(err)})
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
         }).timeout(30000)
     })
-})//xJ92RKSDMYxF
-step('history', function () {
-    describe('Get payments history', () => {
+})
+    step('Get payments history', () => {
         it('history.paymentHistory', (done) => {
+            describe('StellarBurrito test',function (){
             const resolvingPromise = history.paymentsHistory(alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
             })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
         }).timeout(30000)
     })
 })
-step('history', function () {
-    describe('Get transactions history', () => {
+    step('Get transactions history', () => {
+        describe('StellarBurrito test',function (){
         it('history.paymentHistory', (done) => {
             const resolvingPromise = history.transactionsHistory(alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
             })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
         }).timeout(30000)
     })
 })
-step('ledger', function () {
-    describe('Get ledger', () => {
+    step('Get ledger', () => {
         it('ledger.getLedgers', (done) => {
+            describe('StellarBurrito test',function (){
             const resolvingPromise = ledgers.getLedgers(1, 'asc')
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
             })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
         }).timeout(30000)
     })
-})
-step('offerOperations', function () {
-    describe('Create Passive Offer', () => {
+    })
+    step('Create Passive Offer', () => {
+        describe('StellarBurrito test',function (){
         it('offerOperations.createPassiveOffer', (done) => {
             const resolvingPromise = offerOperations.createPassiveOffer(donald.secret(), asset, carl.publicKey(), '1', {
                 'd': 1,
@@ -149,11 +188,16 @@ step('offerOperations', function () {
                 expect(1).to.equal(1);
                 done();
             })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
         }).timeout(30000)
     })
 })
-step('offerOperations', function () {
-    describe('Manage Offer', () => {
+    step('Manage Offer', () => {
+        describe('StellarBurrito test',function (){
         it('offerOperations.createPassiveOffer', (done) => {
             const resolvingPromise = offerOperations.manageOffer(donald.secret(), asset, carl.publicKey(), '1', {
                 'd': 1,
@@ -163,209 +207,287 @@ step('offerOperations', function () {
                 expect(1).to.equal(1);
                 done();
             })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
         }).timeout(30000)
     })
 })
-step('account Status', function () {
-    describe('Get Account', () => {
+    step('Get Account', () => {
+        describe('StellarBurrito test',function (){
         it('accountStatus.getAccount', (done) => {
             const resolvingPromise = accountStatus.getAccount(alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
             })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
         }).timeout(30000)
     })
 })
-step('account Status', function () {
-    describe('Get Balances', () => {
+    step('Get Balances', () => {
+        describe('StellarBurrito test',function (){
         it('accountStatus.getBalances', (done) => {
             const resolvingPromise = accountStatus.getBalances(alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
             })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
         }).timeout(30000)
     })
 })
-step('account Status', function () {
-    describe('Get Data', () => {
+    step('Get Data', () => {
+        describe('StellarBurrito test',function (){
         it('accountStatus.getData', (done) => {
             const resolvingPromise = accountStatus.getData(alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
             })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
         }).timeout(30000)
     })
 })
-step('account Status', function () {
-    describe('Get Flags', () => {
+    step('Get Flags', () => {
+        describe('StellarBurrito test',function (){
         it('accountStatus.getFlags', (done) => {
             const resolvingPromise = accountStatus.getFlags(alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
             })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
         }).timeout(30000)
     })
 })
-step('account Status', function () {
-    describe('Get Home Domain', () => {
+    step('Get Home Domain', () => {
+        describe('StellarBurrito test',function (){
         it('accountStatus.getHomeDomain', (done) => {
             const resolvingPromise = accountStatus.getHomeDomain(alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
+            }).catch((error) => {
+                console.log(error)
+                expect(1).to.equal(4)
+                done()
             })
         }).timeout(30000)
     })
 })
-step('account Status', function () {
-    describe('Get Inflation Destination', () => {
+    step('Get Inflation Destination', () => {
+        describe('StellarBurrito test',function (){
         it('accountStatus.getInflationDestination', (done) => {
             const resolvingPromise = accountStatus.getInflationDestination(alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
+            }).catch((error) => {
+                console.log(error)
+                expect(1).to.equal(4)
+                done()
             })
         }).timeout(30000)
     })
 })
-step('account Status', function () {
-    describe('Get Signers ', () => {
+    step('Get Signers ', () => {
+        describe('StellarBurrito test',function (){
         it('accountStatus.getInflationDestination', (done) => {
             const resolvingPromise = accountStatus.getSigners(alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
+            }).catch((error) => {
+                console.log(error)
+                expect(1).to.equal(4)
+                done()
             })
         }).timeout(30000)
     })
 })
-step('account Status', function () {
-    describe('Get Thresholds ', () => {
+    step('Get Thresholds ', () => {
+        describe('StellarBurrito test',function (){
         it('accountStatus.getThresholds', (done) => {
             const resolvingPromise = accountStatus.getThresholds(alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
+            }).catch((error) => {
+                console.log(error)
+                expect(1).to.equal(4)
+                done()
             })
         }).timeout(30000)
     })
 })
-step('account Status', function () {
-    describe('Get Trustlines ', () => {
+    step('Get Trustlines ', () => {
+        describe('StellarBurrito test',function (){
         it('accountStatus.getThresholds', (done) => {
             const resolvingPromise = accountStatus.getTrustlines(alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
+            }).catch((error) => {
+                console.log(error)
+                expect(1).to.equal(4)
+                done()
             })
         }).timeout(30000)
     })
 })
-step('account Status', function () {
-    describe('Get SequenceNumber ', () => {
+    step('Get SequenceNumber ', () => {
+        describe('StellarBurrito test',function (){
         it('accountStatus.getSequenceNumber', (done) => {
             const resolvingPromise = accountStatus.getSequenceNumber(alice.publicKey())
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
+            }).catch((error) => {
+                console.log(error)
+                expect(1).to.equal(4)
+                done()
             })
         }).timeout(30000)
     })
 })
-step('account Options', function () {
-    describe('Set Flag ', () => {
+    step('Set Flag ', () => {
+        describe('StellarBurrito test',function (){
         it('accountOptions.setFlag', (done) => {
-            const resolvingPromise = accountOptions.setFlag(carl.secret(),1)
+            const resolvingPromise = accountOptions.setFlag(carl.secret(), 1)
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
+            }).catch((error) => {
+                console.log(error)
+                expect(1).to.equal(4)
+                done()
+            })
+        }).timeout(30000)
+    })
+})
+    step('Clear Flag ', () => {
+        describe('StellarBurrito test',function (){
+        it('accountOptions.clearFlags', (done) => {
+            const resolvingPromise = accountOptions.clearFlag(carl.secret(), 1)
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
+        }).timeout(30000)
+    })
+})
+    step('Set HomeDomain ', () => {
+        describe('StellarBurrito test',function (){
+        it('accountOptions.setHomeDomain', (done) => {
+            const resolvingPromise = accountOptions.setHomeDomain(alice.secret(), 'stellar.burrito')
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
+        }).timeout(30000)
+    })
+})
+    step('Set InflationDestination ', () => {
+        describe('StellarBurrito test',function (){
+        it('accountOptions.setInflationDestination', (done) => {
+            const resolvingPromise = accountOptions.setInlationDestination(alice.secret(), bob.publicKey())
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+        }).timeout(30000)
+    })
+})
+    step('Set Master Weight ', () => {
+        describe('StellarBurrito test',function (){
+        it('accountOptions.setMasterWeight', (done) => {
+            const resolvingPromise = accountOptions.setMasterWeight(alice.secret(), '230')
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
+        }).timeout(30000)
+    })
+})
+    step('Set Low Threshold ', () => {
+        describe('StellarBurrito test',function (){
+        it('accountOptions.setLowThreshold', (done) => {
+            const resolvingPromise = accountOptions.setLowThreshold(alice.secret(), '50')
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
+        }).timeout(30000)
+    })
+})
+    step('Set Medium Threshold ', () => {
+        describe('StellarBurrito test',function (){
+        it('accountOptions.setMediumThreshold', (done) => {
+            const resolvingPromise = accountOptions.setMediumThreshold(alice.secret(), '50')
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            })
+                .catch((error) => {
+                    console.log(error)
+                    expect(1).to.equal(4)
+                    done()
+                })
+        }).timeout(30000)
+    })
+})
+    step('Set High Threshold ', () => {
+        describe('StellarBurrito test',function (){
+        it('accountOptions.setHighThreshold', (done) => {
+            const resolvingPromise = accountOptions.setHighThreshold(alice.secret(), '50')
+            resolvingPromise.then((result) => {
+                expect(1).to.equal(1);
+                done();
+            }).catch((error) => {
+                console.log(error)
+                expect(1).to.equal(4)
+                done()
             })
         }).timeout(30000)
     })
 })
 
-step('account Options', function () {
-    describe('Clear Flag ', () => {
-        it('accountOptions.clearFlags', (done) => {
-            const resolvingPromise = accountOptions.clearFlag(carl.secret(),1)
-            resolvingPromise.then((result) => {
-                expect(1).to.equal(1);
-                done();
-            })
-            .catch(error=>{
-                console.log(error)
-                expect(2).to.equal(1)
-            })
-        }).timeout(30000)
-    })
-})
-step('account Options', function () {
-    describe('Set HomeDomain ', () => {
-        it('accountOptions.setHomeDomain', (done) => {
-            const resolvingPromise = accountOptions.setHomeDomain(alice.secret(),'stellar.burrito')
-            resolvingPromise.then((result) => {
-                expect(1).to.equal(1);
-                done();
-            })
-        }).timeout(30000)
-    })
-})
-step('account Options', function () {
-    describe('Set InflationDestination ', () => {
-        it('accountOptions.setInflationDestination', (done) => {
-            const resolvingPromise = accountOptions.setInlationDestination(alice.secret(),bob.publicKey())
-            resolvingPromise.then((result) => {
-                expect(1).to.equal(1);
-                done();
-            })
-        }).timeout(30000)
-    })
-})
-step('account Options', function () {
-    describe('Set Master Weight ', () => {
-        it('accountOptions.setMasterWeight', (done) => {
-            const resolvingPromise = accountOptions.setMasterWeight(alice.secret(),'230')
-            resolvingPromise.then((result) => {
-                expect(1).to.equal(1);
-                done();
-            })
-        }).timeout(30000)
-    })
-})
-step('account Options', function () {
-    describe('Set Low Threshold ', () => {
-        it('accountOptions.setLowThreshold', (done) => {
-            const resolvingPromise = accountOptions.setLowThreshold(alice.secret(),'50')
-            resolvingPromise.then((result) => {
-                expect(1).to.equal(1);
-                done();
-            })
-        }).timeout(30000)
-    })
-})
-step('account Options', function () {
-    describe('Set Medium Threshold ', () => {
-        it('accountOptions.setMediumThreshold', (done) => {
-            const resolvingPromise = accountOptions.setMediumThreshold(alice.secret(),'50')
-            resolvingPromise.then((result) => {
-                expect(1).to.equal(1);
-                done();
-            })
-        }).timeout(30000)
-    })
-})
-step('account Options', function () {
-    describe('Set High Threshold ', () => {
-        it('accountOptions.setHighThreshold', (done) => {
-            const resolvingPromise = accountOptions.setHighThreshold(alice.secret(),'50')
-            resolvingPromise.then((result) => {
-                expect(1).to.equal(1);
-                done();
-            })
-        }).timeout(30000)
-    })
-})

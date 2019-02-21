@@ -49,11 +49,14 @@
     "url": "git+https://github.com/andreaborio/stellarburrito.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --require mocha-steps --reporter mocha-badge-generator"
   },
-  "version": "0.0.3-alpha-b0001",
+  "version": "0.0.3-alpha-b0002",
   "dependencies": {
+    "mocha-reporter-badge": "^0.1.0",
     "stellar-sdk": "latest"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "mocha-badge-generator": "^0.2.2"
+  }
 }
