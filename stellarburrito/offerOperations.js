@@ -27,18 +27,25 @@ if (typeof env != 'undefined' && env === "testnet") {
  * @param {string} source - The source account (defaults to transaction source).
  * @returns {JSON} result
  */
-async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer = 'native', amount = '0', price = {'d': 1,'n': 1}, offerId = '0', buyingCode = 'native', buyingIssuer = 'native', source = 'unsetted') {
+async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer = 'native', amount = '0', price = { 'd': 1, 'n': 1 }, offerId = '0', buyingCode = 'native', buyingIssuer = 'native', source = 'unsetted') {
     return new Promise((resolve, reject) => {
         let buying, selling, des
         try {
-            if (buyingCode == 'native' && buyingIssuer == 'native') {
+            if (buyingCode == "native" || buyingIssuer == "native")
                 buying = new StellarSdk.Asset.native()
-            } else {
+            else
                 buying = new StellarSdk.Asset(buyingCode, buyingIssuer)
-            }
-            selling = new StellarSdk.Asset(sellingCode, sellingIssuer)
+
         } catch (error) {
-            reject('StellarBurrito_ASSET_ERR \n\r' + error)
+            reject('StellarBurrito_ASSET_ERR Buying \n\r' + error)
+        }
+        try {
+            if (sellingCode == "native" || sellingCode == "native")
+                selling = new StellarSdk.Asset.native()
+            else
+                selling = new StellarSdk.Asset(sellingCode, sellingIssuer)
+        } catch (error) {
+            reject('StellarBurrito_ASSET_ERR Selling \n\r' + error)
         }
         try { des = StellarSdk.Keypair.fromSecret(privKey) }
         catch (err) {
@@ -89,18 +96,25 @@ async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer
  * @param {string} source - The source account (defaults to transaction source).
  * @return {JSON} result
  */
-async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', price = {'d': 1,'n': 1}, offerId = '0', buyingCode = 'native', buyingIssuer = 'native', source = 'unsetted') {
+async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', price = { 'd': 1, 'n': 1 }, offerId = '0', buyingCode = 'native', buyingIssuer = 'native', source = 'unsetted') {
     return new Promise((resolve, reject) => {
         let buying, selling, des
         try {
-            if (buyingCode == "native" && buyingIssuer == "native")
+            if (buyingCode == "native" || buyingIssuer == "native")
                 buying = new StellarSdk.Asset.native()
             else
                 buying = new StellarSdk.Asset(buyingCode, buyingIssuer)
 
-            selling = new StellarSdk.Asset(sellingCode, sellingIssuer)
         } catch (error) {
-            reject('StellarBurrito_ASSET_ERR \n\r' + error)
+            reject('StellarBurrito_ASSET_ERR Buying \n\r' + error)
+        }
+        try {
+            if (sellingCode == "native" || sellingCode == "native")
+                selling = new StellarSdk.Asset.native()
+            else
+                selling = new StellarSdk.Asset(sellingCode, sellingIssuer)
+        } catch (error) {
+            reject('StellarBurrito_ASSET_ERR Selling \n\r' + error)
         }
         try { des = StellarSdk.Keypair.fromSecret(privKey) }
         catch (err) {

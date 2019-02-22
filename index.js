@@ -24,7 +24,7 @@ async function f1() {
  // console.log(JSON.stringify(await obx.getOrderbook('BTC','GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P')))
   //console.log(JSON.stringify(await assetop.getAssets(1,200)))
   try{
-  let res =await pay('SAOUNYUBZDO3T3BIS2TC4W3TD6T5K5LQMQYKYQHJZYCEVS2KEG52OWA4','GDSQT7FFLLVVU2KW33D52DIOGDGPXCK5HVHMLOBAF6YY5VKUKFFETFXF','1000000000')
+  let res =await sb.accountOperations.createAccount('SAOUNYUBZDO3T3BIS2TC4W3TD6T5K5LQMQYKYQHJZYCEVS2KEG52OWA4')
   console.log(res)
   }
   catch(error){

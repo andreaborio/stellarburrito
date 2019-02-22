@@ -51,10 +51,9 @@
   "scripts": {
     "test": "mocha --require mocha-steps --reporter mocha-badge-generator"
   },
-  "version": "0.0.3-alpha-b0002",
+  "version": "0.0.3-alpha-b0005",
   "dependencies": {
-    "mocha-reporter-badge": "^0.1.0",
-    "stellar-sdk": "latest"
+    "stellar-sdk": "0.11.0"
   },
   "devDependencies": {
     "mocha-badge-generator": "^0.2.2"

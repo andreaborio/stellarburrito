@@ -30,7 +30,7 @@ let StellarSdk = require('stellar-sdk')
  * @param {string} trustLimit - The amount of coin that you want to trust from this issuer
  */
 
-async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'default', startingBalance = '1.501', memoTypeTrust = 'text', memoTrust = 'default', issuer = 'unsetted', assetCode = 'unsetted', trustLimit = 'unsetted') {
+async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'default', startingBalance = '1.501', memoTypeTrust = 'text', memoTrust = 'default', issuer = 'unsetted', assetCode = 'unsetted', trustLimit = 'unsetted', timeout = 15) {
   return new Promise((resolve, reject) => {
     
     let memoFinalCreate =memoCreator(memoTypeCreate, memoCreate)
@@ -62,8 +62,8 @@ async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'def
             startingBalance
           }))
           .addMemo(memoFinalCreate)
-          .build();
-        transaction.sign(des);
+          .build()
+        transaction.sign(des)
         return server.submitTransaction(transaction)
       })
       .then(function (result) {
