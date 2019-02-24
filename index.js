@@ -10,6 +10,8 @@ let oo = require('./stellarburrito/offerOperations')
 let as = require('./stellarburrito/accountStatus')
 let aop = require('./stellarburrito/accountOptions')
 let obx = require('./stellarburrito/orderbook')
+
+let account = require('./stellarburrito/account')
 /*var aus=issuer
 issuer=source SAATOSTIWQNLY46SRHGTNJ2NBYAF7YL2BPFLD7ZHZOGUJVR3KOYLUF7T
 source=aus*/
@@ -24,8 +26,13 @@ async function f1() {
  // console.log(JSON.stringify(await obx.getOrderbook('BTC','GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P')))
   //console.log(JSON.stringify(await assetop.getAssets(1,200)))
   try{
-  let res =await sb.accountOperations.createAccount('SAOUNYUBZDO3T3BIS2TC4W3TD6T5K5LQMQYKYQHJZYCEVS2KEG52OWA4')
-  console.log(res)
+    let user= new account()
+    await user.load('SAIHFII5T2BVTM4FHZO7AJADSH3LOTCB2IM3ZIE5NB6ERZ6ITR3NSGYG')
+    console.log(user.balances)
+    console.log(await user.getPayments())
+    console.log(await user.getTransactions(1))
+    console.log(await user.inflation_destination)
+  
   }
   catch(error){
     console.log(error)
