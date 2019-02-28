@@ -7,7 +7,6 @@ let accountStatus=require('./accountStatus.js')
 let accountOptions = require('./accountOptions.js')
 let offerOperations=require('./offerOperations.js')
 let StellarSdk=require('stellar-sdk')
-
   module.exports={
     accountOperations,
     Pay,

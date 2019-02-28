@@ -11,7 +11,7 @@ let as = require('./stellarburrito/accountStatus')
 let aop = require('./stellarburrito/accountOptions')
 let obx = require('./stellarburrito/orderbook')
 
-let account = require('./stellarburrito/account')
+let Account = require('./stellarburrito/account')
 /*var aus=issuer
 issuer=source SAATOSTIWQNLY46SRHGTNJ2NBYAF7YL2BPFLD7ZHZOGUJVR3KOYLUF7T
 source=aus*/
@@ -22,17 +22,16 @@ let utente = 'SAIHFII5T2BVTM4FHZO7AJADSH3LOTCB2IM3ZIE5NB6ERZ6ITR3NSGYG'
 let referto = 'SBA2UF6QKW2AZVDURNUOHGYPQ7TZCND5LJHXQZYOONJC6WOS65LDNLCU'
 let refertoPair = sb.StellarSdk.Keypair.fromSecret(referto)
 let utentePair = sb.StellarSdk.Keypair.fromSecret(utente)
+let Fee= require('./stellarburrito/fee')
+let fee=new Fee()
 async function f1() {
  // console.log(JSON.stringify(await obx.getOrderbook('BTC','GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P')))
   //console.log(JSON.stringify(await assetop.getAssets(1,200)))
   try{
-    let user= new account()
-    await user.load('SAIHFII5T2BVTM4FHZO7AJADSH3LOTCB2IM3ZIE5NB6ERZ6ITR3NSGYG')
-    console.log(user.balances)
-    console.log(await user.getPayments())
-    console.log(await user.getTransactions(1))
-    console.log(await user.inflation_destination)
-  
+   //let changeTrust=new Account('SBVLJSF2R65O5R3B3XY7AI3DW7R74HHKBN66KCINL475E7A4RVUKVDQX')
+ //await changeTrust.Pay({destination:'GCMA7SXBTATUYX4OH7G66KFQEBIAJLQ6O2GPQB6EE52ZI5GKPZFUUPVJ',amount:'80',assetCode:'LYS',issuer:'GCMA7SXBTATUYX4OH7G66KFQEBIAJLQ6O2GPQB6EE52ZI5GKPZFUUPVJ'})
+ //  await changeTrust.changeTrust('GCMA7SXBTATUYX4OH7G66KFQEBIAJLQ6O2GPQB6EE52ZI5GKPZFUUPVJ','LYS','0')
+  // await changeTrust.mergeAccount('GCBU5OBHEVFLLUXEDQBPYPM32DW24YZU6UWEZEEAHNK7VYXTRADGSOXY')
   }
   catch(error){
     console.log(error)

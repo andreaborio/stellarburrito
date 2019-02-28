@@ -1,5 +1,6 @@
 const accountOperations = require('../accountOperations')
 const accountStatus = require('../accountStatus')
+const Account = require('../account')
 const assetOperations = require('../assetOperations')
 const Pay = require('../paymentOperations')
 const offerOperations = require('../offerOperations')
@@ -11,18 +12,24 @@ const StellarSdk = require('stellar-sdk')
 const chai = require('chai')
     .use(require('chai-as-promised'))
 const expect = chai.expect;
-let accountTrust = 'SDUSO5W2WU2FEMRKAGXFMZUEJ4RYCCKZYE2UADVRU4APLIVGV5K5Y5LC'
+let accountTrust = 'SC4P7ENIMJEFH5EHLEXFCMWC2YEYEZFVBPMLWG7AATL2SL5CYO55QAPI'
 let alice = StellarSdk.Keypair.fromSecret(accountTrust)
 let accountDistributor = config.testaccount
 let bob = StellarSdk.Keypair.fromSecret(accountDistributor)
-let distributor = 'SCNIYIP6WLTJYOXBQVAWQQJMYIXIIAGFKEJDAZPY4T5FUZL2OODV5PNR'
-let issuer = 'SCYTGAZEMS4Y3EUX2DBAKQPVX6AK4N6OMIKJQXYCRFC573DAECWLFYYY'
+let distributor = 'SBZ54FCSTAYQGTFU3GDADJBEEYVYLF35AYXGEUDJL7OJZS6QJGPDQ3L3'
+let issuer = 'SD3SX3RCEHC7QRBIYPMBEYZDV4GOZVTPBUECVR6DZFHKZTWQA3JG7DEO'
 let distributorPair = StellarSdk.Keypair.fromSecret(distributor)
 let issuerPair = StellarSdk.Keypair.fromSecret(issuer)
-let carl = StellarSdk.Keypair.fromSecret('SA74HZ5F5PIJWH26QBYXCKGHRMNB4VRMMPSVCWTYA4UZBBJX6TZZ5CIZ')
-let donald = StellarSdk.Keypair.fromSecret('SAIOAGOJCGBGI73CGWLUDZZPZQWJW75PYGGD2OOD6NIS2TTCNF7QY7YX')
-let privKeyCreate = ''
+let carl = StellarSdk.Keypair.fromSecret('SDL4UJZSKVUKUMSDQ6UQ4BBS6FEEMDUSMBPTN2ISDXTUU3NMDCMURN33')
+let donald = StellarSdk.Keypair.fromSecret('SB3N6S2HZFC4NEPP25XYYBHNX7QUPBVJE76TWM4Z6NL72XWMZTL26THG')
+let privKeyCreate;
 let asset = ""
+let testaccount=new Account(config.testaccount)
+let aliceAccount= new Account(alice.secret())
+let bobAccount= new Account(bob.secret())
+let carlAccount=new Account(carl.secret())
+let donaldAccount = new Account(donald.secret())
+console.log( donaldAccount.publicKey)
 function random() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -31,11 +38,11 @@ function random() {
     return text;
 }
     step('Create new account', () => {
-        describe('StellarBurrito test',function (){
-        it('accountOperations.createAccount', (done) => {
-            const resolvingPromise =  accountOperations.createAccount(config.testaccount)
+        describe('Create new account',function (){
+        it('Account.createAccount', (done) => {
+            let resolvingPromise =  testaccount.createAccount()
             resolvingPromise.then((result) => {
-                privKeyCreate = result.privateKey
+                privKeyCreate = new Account(result.privateKey)
                 expect(1).to.equal(1);
                 done();
             })
@@ -49,9 +56,9 @@ function random() {
 })
 
     step('Trust new asset', () => {
-        describe('StellarBurrito test',function (){
-        it('accountOperations.changeTrust', (done) => {
-            const resolvingPromise = accountOperations.changeTrust(alice.secret(), 'GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P', 'ETH', '1')
+        describe('Change Trust',function (){
+        it('Account.changeTrust', (done) => {
+            const resolvingPromise = aliceAccount.changeTrust('GDDOYLS5X52UTIUKVX2CDLEI4OF5YIBB4SE4MDPWRTGS7W23ZZLVKWTJ','qY3g1IyY7qUW','100000000')
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -65,9 +72,9 @@ function random() {
     })
 })
     step('Manage Data', () => {
-        describe('StellarBurrito test',function (){
-        it('accountOperations.manageData', (done) => {
-            accountOperations.manageData(alice.secret(), 'stellar', 'burrito')
+        describe('Manage data',function (){
+        it('Account.manageData', (done) => {
+           aliceAccount.manageData('stellar', 'burrito')
                 .then((result) => {
                     expect(1).to.equal(1);
                     done()
@@ -82,8 +89,8 @@ function random() {
 })
     step('Merge account', () => {
         describe('StellarBurrito test',function (){
-        it('accountOperations.mergeAccount', (done) => {
-            const resolvingPromise = accountOperations.mergeAccount(privKeyCreate, alice.publicKey())
+        it('Account.mergeAccount', (done) => {
+            const resolvingPromise = privKeyCreate.mergeAccount(aliceAccount) 
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -96,8 +103,9 @@ function random() {
         }).timeout(30000)
     })
     })
+    aliceAccount.createPassiveOffer()
     step('Create new asset', () => {
-        describe('StellarBurrito test',function (){
+        describe('Create New Asset',function (){
         it('assetOperations.createAsset', (done) => {
             asset = random()
             const resolvingPromise = assetOperations.createAsset(carl.secret(), donald.secret(), '100000', asset)
@@ -116,7 +124,7 @@ function random() {
     step('Pay from alice to bob', () => {
         it('paymentOperations.Pay', (done) => {
             describe('StellarBurrito test',function (){
-            const resolvingPromise = Pay(carl.secret(), donald.publicKey(), '0.000001')
+            const resolvingPromise = carlAccount.Pay({destination:donald.publicKey(), amount:'0.000001'})
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -132,7 +140,7 @@ function random() {
     step('Get payments history', () => {
         it('history.paymentHistory', (done) => {
             describe('StellarBurrito test',function (){
-            const resolvingPromise = history.paymentsHistory(alice.publicKey())
+            const resolvingPromise = aliceAccount.getPayments()
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -148,7 +156,7 @@ function random() {
     step('Get transactions history', () => {
         describe('StellarBurrito test',function (){
         it('history.paymentHistory', (done) => {
-            const resolvingPromise = history.transactionsHistory(alice.publicKey())
+            const resolvingPromise =aliceAccount.getTransactions()
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -180,10 +188,7 @@ function random() {
     step('Create Passive Offer', () => {
         describe('StellarBurrito test',function (){
         it('offerOperations.createPassiveOffer', (done) => {
-            const resolvingPromise = offerOperations.createPassiveOffer(donald.secret(), asset, carl.publicKey(), '1', {
-                'd': 1,
-                'n': 1
-            }, '0')
+            const resolvingPromise = donaldAccount.createPassiveOffer()
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -199,10 +204,7 @@ function random() {
     step('Manage Offer', () => {
         describe('StellarBurrito test',function (){
         it('offerOperations.createPassiveOffer', (done) => {
-            const resolvingPromise = offerOperations.manageOffer(donald.secret(), asset, carl.publicKey(), '1', {
-                'd': 1,
-                'n': 1
-            }, '0', 'u28qamPiB9Ze', carl.publicKey())
+            const resolvingPromise = donaldAccount.manageOffer()
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -218,8 +220,9 @@ function random() {
     step('Get Account', () => {
         describe('StellarBurrito test',function (){
         it('accountStatus.getAccount', (done) => {
-            const resolvingPromise = accountStatus.getAccount(alice.publicKey())
+            const resolvingPromise = aliceAccount.Load()
             resolvingPromise.then((result) => {
+                console.log(aliceAccount)
                 expect(1).to.equal(1);
                 done();
             })
@@ -266,8 +269,9 @@ function random() {
     step('Get Flags', () => {
         describe('StellarBurrito test',function (){
         it('accountStatus.getFlags', (done) => {
-            const resolvingPromise = accountStatus.getFlags(alice.publicKey())
+            const resolvingPromise = aliceAccount.Load()
             resolvingPromise.then((result) => {
+                console.log(aliceAccount.flags)
                 expect(1).to.equal(1);
                 done();
             })
@@ -282,8 +286,9 @@ function random() {
     step('Get Home Domain', () => {
         describe('StellarBurrito test',function (){
         it('accountStatus.getHomeDomain', (done) => {
-            const resolvingPromise = accountStatus.getHomeDomain(alice.publicKey())
+            const resolvingPromise = aliceAccount.Load()
             resolvingPromise.then((result) => {
+                console.log(aliceAccount.home_domain)
                 expect(1).to.equal(1);
                 done();
             }).catch((error) => {
@@ -297,8 +302,9 @@ function random() {
     step('Get Inflation Destination', () => {
         describe('StellarBurrito test',function (){
         it('accountStatus.getInflationDestination', (done) => {
-            const resolvingPromise = accountStatus.getInflationDestination(alice.publicKey())
+            const resolvingPromise = aliceAccount.Load()
             resolvingPromise.then((result) => {
+                console.log(aliceAccount.inflation_destination)
                 expect(1).to.equal(1);
                 done();
             }).catch((error) => {
@@ -311,9 +317,10 @@ function random() {
 })
     step('Get Signers ', () => {
         describe('StellarBurrito test',function (){
-        it('accountStatus.getInflationDestination', (done) => {
-            const resolvingPromise = accountStatus.getSigners(alice.publicKey())
+        it('accountStatus.getSigners', (done) => {
+            const resolvingPromise = aliceAccount.Load()
             resolvingPromise.then((result) => {
+                console.log(aliceAccount.signers)
                 expect(1).to.equal(1);
                 done();
             }).catch((error) => {
@@ -327,8 +334,9 @@ function random() {
     step('Get Thresholds ', () => {
         describe('StellarBurrito test',function (){
         it('accountStatus.getThresholds', (done) => {
-            const resolvingPromise = accountStatus.getThresholds(alice.publicKey())
+            const resolvingPromise = aliceAccount.Load()
             resolvingPromise.then((result) => {
+                console.log(aliceAccount.thresholds)
                 expect(1).to.equal(1);
                 done();
             }).catch((error) => {
@@ -341,9 +349,10 @@ function random() {
 })
     step('Get Trustlines ', () => {
         describe('StellarBurrito test',function (){
-        it('accountStatus.getThresholds', (done) => {
-            const resolvingPromise = accountStatus.getTrustlines(alice.publicKey())
+        it('accountStatus.getTrustlines', (done) => {
+            const resolvingPromise = aliceAccount.Load()
             resolvingPromise.then((result) => {
+                console.log(aliceAccount.trustlines)
                 expect(1).to.equal(1);
                 done();
             }).catch((error) => {
@@ -357,8 +366,9 @@ function random() {
     step('Get SequenceNumber ', () => {
         describe('StellarBurrito test',function (){
         it('accountStatus.getSequenceNumber', (done) => {
-            const resolvingPromise = accountStatus.getSequenceNumber(alice.publicKey())
+            const resolvingPromise = aliceAccount.Load()
             resolvingPromise.then((result) => {
+                console.log(aliceAccount.sequence)
                 expect(1).to.equal(1);
                 done();
             }).catch((error) => {
@@ -372,7 +382,7 @@ function random() {
     step('Set Flag ', () => {
         describe('StellarBurrito test',function (){
         it('accountOptions.setFlag', (done) => {
-            const resolvingPromise = accountOptions.setFlag(carl.secret(), 1)
+            const resolvingPromise = carlAccount.setFlag('1')
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -387,7 +397,7 @@ function random() {
     step('Clear Flag ', () => {
         describe('StellarBurrito test',function (){
         it('accountOptions.clearFlags', (done) => {
-            const resolvingPromise = accountOptions.clearFlag(carl.secret(), 1)
+            const resolvingPromise = carlAccount.clearFlag('2')
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -403,7 +413,7 @@ function random() {
     step('Set HomeDomain ', () => {
         describe('StellarBurrito test',function (){
         it('accountOptions.setHomeDomain', (done) => {
-            const resolvingPromise = accountOptions.setHomeDomain(alice.secret(), 'stellar.burrito')
+            const resolvingPromise = aliceAccount.setHomeDomain('StellarBurrito')
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -419,7 +429,7 @@ function random() {
     step('Set InflationDestination ', () => {
         describe('StellarBurrito test',function (){
         it('accountOptions.setInflationDestination', (done) => {
-            const resolvingPromise = accountOptions.setInlationDestination(alice.secret(), bob.publicKey())
+            const resolvingPromise = aliceAccount.setInlationDestination(bobAccount)
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -430,7 +440,7 @@ function random() {
     step('Set Master Weight ', () => {
         describe('StellarBurrito test',function (){
         it('accountOptions.setMasterWeight', (done) => {
-            const resolvingPromise = accountOptions.setMasterWeight(alice.secret(), '230')
+            const resolvingPromise = aliceAccount.setMasterWeight(240)
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -446,7 +456,7 @@ function random() {
     step('Set Low Threshold ', () => {
         describe('StellarBurrito test',function (){
         it('accountOptions.setLowThreshold', (done) => {
-            const resolvingPromise = accountOptions.setLowThreshold(alice.secret(), '50')
+            const resolvingPromise = aliceAccount.setLowThreshold(50)
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -462,7 +472,7 @@ function random() {
     step('Set Medium Threshold ', () => {
         describe('StellarBurrito test',function (){
         it('accountOptions.setMediumThreshold', (done) => {
-            const resolvingPromise = accountOptions.setMediumThreshold(alice.secret(), '50')
+            const resolvingPromise = aliceAccount.setMediumThreshold(50)
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();
@@ -478,7 +488,7 @@ function random() {
     step('Set High Threshold ', () => {
         describe('StellarBurrito test',function (){
         it('accountOptions.setHighThreshold', (done) => {
-            const resolvingPromise = accountOptions.setHighThreshold(alice.secret(), '50')
+            const resolvingPromise = aliceAccount.setHighThreshold(50)
             resolvingPromise.then((result) => {
                 expect(1).to.equal(1);
                 done();

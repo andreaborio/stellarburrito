@@ -1,5 +1,5 @@
 const errorManager = require('./error')
-const StellarSdk=require('stellar-sdk')
+const StellarSdk = require('stellar-sdk')
 function memoCreator(type, payload) {
     let memo = ""
     let error = false
@@ -10,7 +10,7 @@ function memoCreator(type, payload) {
                 error = true
             }
             else
-            memo = StellarSdk.Memo.text(payload)
+                memo = StellarSdk.Memo.text(payload)
             break;
         case 'id':
             if (payload > 18446744073709551615 || payload < 0) {
@@ -18,7 +18,7 @@ function memoCreator(type, payload) {
                 error = true
             }
             else
-            memo = StellarSdk.Memo.id(payload)
+                memo = StellarSdk.Memo.id(payload)
             break;
         case 'return':
             if (payload.length > 28) {
@@ -26,7 +26,7 @@ function memoCreator(type, payload) {
                 error = true
             }
             else
-            memo = StellarSdk.Memo.return(payload)
+                memo = StellarSdk.Memo.return(payload)
             break;
         default:
             memo = errorManager('memo', -1)
