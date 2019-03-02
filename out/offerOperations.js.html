@@ -29,6 +29,18 @@
             <pre class="prettyprint source linenums"><code>/* eslint-disable new-cap */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-magic-numbers */
+let config = require('./config')
+let server
+let errorManager = require('./error')
+let env = config.env
+let StellarSdk = require('stellar-sdk')
+if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
+    StellarSdk.Network.useTestNetwork()
+    server = new StellarSdk.Server(config.testnet_horizon)
+} else {
+    StellarSdk.Network.usePublicNetwork()
+    server = new StellarSdk.Server(config.pubnet_horizon)
+}
 /**
  * Create Passive Offer function
  *  This is useful for offers just used as 1:1 exchanges for path payments. Use manage offer to manage this offer after using this operation to create it.
@@ -36,38 +48,38 @@
  * @param {string} sellingCode -Asset code that you want to sell
  * @param {string} sellingIssuer - Issuer's publicKey of the Asset that you want to sell
  * @param {string} amount - The amount of coin that you want to sell
- * @param {string} price - Issuer's publicKey of the Asset that you want to sell
+ * @param {JSON} price - Issuer's publicKey of the Asset that you want to sell
  * @param {string} offerId - If 0 create new offer
  * @param {string} buyingCode - Asset code that you want to buy
  * @param {string} buyingIssuer - Issuer's publicKey of the Asset that you want to sell
  * @param {string} source - The source account (defaults to transaction source).
  * @returns {JSON} result
  */
-async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer = 'native', amount = '0', price = 1, offerId = '0', buyingCode = 'native', buyingIssuer = 'native',timeout=15, source = 'unsetted') {
+async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer = 'native', amount = '0', price = { 'd': 1, 'n': 1 }, offerId = '0', buyingCode = 'native', buyingIssuer = 'native', source = 'unsetted') {
     return new Promise((resolve, reject) => {
-        let config = require('./config')
-        let server
-        let env = config.env
-        let buying, selling
-        let StellarSdk = require('stellar-sdk')
-        if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
-            StellarSdk.Network.useTestNetwork()
-            server = new StellarSdk.Server(config.testnet_horizon)
-        } else {
-            StellarSdk.Network.usePublicNetwork()
-            server = new StellarSdk.Server(config.pubnet_horizon)
+        let buying, selling, des
+        try {
+            if (buyingCode == "native" || buyingIssuer == "native")
+                buying = new StellarSdk.Asset.native()
+            else
+                buying = new StellarSdk.Asset(buyingCode, buyingIssuer)
+
+        } catch (error) {
+            reject('StellarBurrito_ASSET_ERR Buying \n\r' + error)
         }
         try {
-            if (buyingCode == 'native' &amp;&amp; buyingIssuer == 'native') {
-                buying = new StellarSdk.Asset.native()
-            } else {
-                buying = new StellarSdk.Asset(buyingCode, buyingIssuer)
-            }
-            selling = new StellarSdk.Asset(sellingCode, sellingIssuer)
+            if (sellingCode == "native" || sellingCode == "native")
+                selling = new StellarSdk.Asset.native()
+            else
+                selling = new StellarSdk.Asset(sellingCode, sellingIssuer)
         } catch (error) {
-            reject('StellarBurrito_ASSET_ERR \n\r' + error)
+            reject('StellarBurrito_ASSET_ERR Selling \n\r' + error)
         }
-        let des = StellarSdk.Keypair.fromSecret(privKey)
+        try { des = StellarSdk.Keypair.fromSecret(privKey) }
+        catch (err) {
+            reject(errorManager('keyPair', -1))
+            return
+        }
         server.loadAccount(des.publicKey())
             .then(function (sourceAccount) {
                 let builder = new StellarSdk.TransactionBuilder(sourceAccount)
@@ -78,22 +90,22 @@ async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer
                         price,
                         offerId
                     }))
-                    .addMemo(StellarSdk.Memo.text('default'))
-                    .setTimeout(timeout)
                     .build()
                 builder.sign(des)
                 server.submitTransaction(builder)
-
                     .then(function (result) {
                         resolve(result)
                     })
                     .catch(function (error) {
-                        reject('StellarBurrito_TX_ERR ' + error)
+                        if (typeof error.response != 'undefined')
+                            reject(errorManager('manageOffer', error.response.data.extras.result_codes.operations[0]))
+                        else
+                            reject(error)
+                        return
                     })
             })
-            .catch(error=>{
-                console.log(error)
-                reject('error \n\r'+error)
+            .catch((error) => {
+                reject(errorManager('loadAccount', -1))
             })
     })
 }
@@ -105,38 +117,38 @@ async function createPassiveOffer(privKey, sellingCode = 'native', sellingIssuer
  * @param {string} sellingCode -Asset code that you want to sell
  * @param {string} sellingIssuer - Issuer's publicKey of the Asset that you want to sell
  * @param {string} amount - The total amount youre selling. If 0, deletes the offer
- * @param {string} price - Price of 1 unit of selling in terms of buying.
+ * @param {JSON} price - Price of 1 unit of selling in terms of buying.
  * @param {string} offerId - OfferID if 0 create new offer
  * @param {string} buyingCode - Asset code that you want to buy
  * @param {string} buyingIssuer - Issuer's publicKey of the Asset that you want to sell
  * @param {string} source - The source account (defaults to transaction source).
  * @return {JSON} result
  */
-async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', price = '1', offerId = '0', buyingCode = 'native', buyingIssuer = 'native',timeout=15, source = 'unsetted') {
+async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', price = { 'd': 1, 'n': 1 }, offerId = '0', buyingCode = 'native', buyingIssuer = 'native', source = 'unsetted') {
     return new Promise((resolve, reject) => {
-        let config = require('./config')
-        let server
-        let env = config.env
-        let buying, selling
-        let StellarSdk = require('stellar-sdk')
-        if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
-            StellarSdk.Network.useTestNetwork()
-            server = new StellarSdk.Server(config.testnet_horizon)
-        } else {
-            StellarSdk.Network.usePublicNetwork()
-            server = new StellarSdk.Server(config.pubnet_horizon)
+        let buying, selling, des
+        try {
+            if (buyingCode == "native" || buyingIssuer == "native")
+                buying = new StellarSdk.Asset.native()
+            else
+                buying = new StellarSdk.Asset(buyingCode, buyingIssuer)
+
+        } catch (error) {
+            reject('StellarBurrito_ASSET_ERR Buying \n\r' + error)
         }
         try {
-            if (buyingCode == "native" &amp;&amp; buyingIssuer == "native") {
-                buying = new StellarSdk.Asset.native()
-            } else {
-                buying = new StellarSdk.Asset(buyingCode, buyingIssuer)
-            }
-            selling = new StellarSdk.Asset(sellingCode, sellingIssuer)
+            if (sellingCode == "native" || sellingCode == "native")
+                selling = new StellarSdk.Asset.native()
+            else
+                selling = new StellarSdk.Asset(sellingCode, sellingIssuer)
         } catch (error) {
-            reject('StellarBurrito_ASSET_ERR \n\r' + error)
+            reject('StellarBurrito_ASSET_ERR Selling \n\r' + error)
         }
-        let des = StellarSdk.Keypair.fromSecret(privKey)
+        try { des = StellarSdk.Keypair.fromSecret(privKey) }
+        catch (err) {
+            reject(errorManager('keyPair', -1))
+            return
+        }
         server.loadAccount(des.publicKey())
             .then(function (sourceAccount) {
                 let builder = new StellarSdk.TransactionBuilder(sourceAccount)
@@ -147,8 +159,6 @@ async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', pr
                         price,
                         offerId
                     }))
-                    .addMemo(StellarSdk.Memo.text('default'))
-                    .setTimeout(timeout)
                     .build()
                 builder.sign(des)
                 server.submitTransaction(builder)
@@ -157,9 +167,15 @@ async function manageOffer(privKey, sellingCode, sellingIssuer, amount = '0', pr
                         resolve(result)
                     })
                     .catch(function (error) {
-                        console.log((error.response))
-                        reject('StellarBurrito_TX_ERR ' + error)
+                        if (typeof error.response != 'undefined')
+                            reject(errorManager('manageOffer', error.response.data.extras.result_codes.operations[0]))
+                        else
+                            reject(err)
+                        return
                     })
+            })
+            .catch((error) => {
+                reject(errorManager('loadAccount', -1))
             })
     })
 }
@@ -177,13 +193,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#bumpSequence">bumpSequence</a></li><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#clearFlag">clearFlag</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getFlags">getFlags</a></li><li><a href="global.html#getHomeDomain">getHomeDomain</a></li><li><a href="global.html#getInflationDestination">getInflationDestination</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#getSequenceNumber">getSequenceNumber</a></li><li><a href="global.html#getSigners">getSigners</a></li><li><a href="global.html#getThresholds">getThresholds</a></li><li><a href="global.html#getTrustlines">getTrustlines</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setFlag">setFlag</a></li><li><a href="global.html#setHighThreshold">setHighThreshold</a></li><li><a href="global.html#setHomeDomain">setHomeDomain</a></li><li><a href="global.html#setInlationDestination">setInlationDestination</a></li><li><a href="global.html#setLowThreshold">setLowThreshold</a></li><li><a href="global.html#setMasterWeight">setMasterWeight</a></li><li><a href="global.html#setMediumThreshold">setMediumThreshold</a></li><li><a href="global.html#setOptions">setOptions</a></li><li><a href="global.html#setSigner">setSigner</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#bumpSequence">bumpSequence</a></li><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#clearFlag">clearFlag</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getAssetInfo">getAssetInfo</a></li><li><a href="global.html#getAssets">getAssets</a></li><li><a href="global.html#getAssetsForIssuer">getAssetsForIssuer</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getFlags">getFlags</a></li><li><a href="global.html#getHomeDomain">getHomeDomain</a></li><li><a href="global.html#getInflationDestination">getInflationDestination</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#getOffers">getOffers</a></li><li><a href="global.html#getOrderbook">getOrderbook</a></li><li><a href="global.html#getSequenceNumber">getSequenceNumber</a></li><li><a href="global.html#getSigners">getSigners</a></li><li><a href="global.html#getThresholds">getThresholds</a></li><li><a href="global.html#getTrustlines">getTrustlines</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setFlag">setFlag</a></li><li><a href="global.html#setHighThreshold">setHighThreshold</a></li><li><a href="global.html#setHomeDomain">setHomeDomain</a></li><li><a href="global.html#setInlationDestination">setInlationDestination</a></li><li><a href="global.html#setLowThreshold">setLowThreshold</a></li><li><a href="global.html#setMasterWeight">setMasterWeight</a></li><li><a href="global.html#setMediumThreshold">setMediumThreshold</a></li><li><a href="global.html#setOptions">setOptions</a></li><li><a href="global.html#setSigner">setSigner</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Feb 07 2019 19:59:02 GMT+0100 (CET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Feb 28 2019 19:53:58 GMT+0100 (GMT+01:00)
 </footer>
 
 <script> prettyPrint(); </script>

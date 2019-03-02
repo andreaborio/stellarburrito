@@ -26,27 +26,24 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * 
- * 
- * 
+            <pre class="prettyprint source linenums"><code>let config = require('./config')
+let server
+let env = config.env
+let StellarSdk = require('stellar-sdk')
+if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
+	StellarSdk.Network.useTestNetwork()
+	server = new StellarSdk.Server(config.testnet_horizon)
+} else {
+	StellarSdk.Network.usePublicNetwork()
+	server = new StellarSdk.Server(config.pubnet_horizon)
+}
+/**
  * getAccount
  * retrive account from horizon
  * @param {string} pubKey - The publicKey of the account
  */
 async function getAccount(pubKey) {
 	return new Promise((resolve, reject) => {
-		let config = require('./config')
-		let server
-		let env = config.env
-		let StellarSdk = require('stellar-sdk')
-		if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
-			StellarSdk.Network.useTestNetwork()
-			server = new StellarSdk.Server(config.testnet_horizon)
-		} else {
-			StellarSdk.Network.usePublicNetwork()
-			server = new StellarSdk.Server(config.pubnet_horizon)
-		}
 		server.accounts()
 			.accountId(pubKey)
 			.call()
@@ -55,6 +52,7 @@ async function getAccount(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 	})
 }
@@ -76,6 +74,7 @@ async function getBalances(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 
 	})
@@ -89,14 +88,15 @@ async function getTrustlines(pubKey) {
 	return new Promise((resolve, reject) => {
 		getAccount(pubKey)
 			.then(page => {
-				let assets = {assets: []}
+				let assets = { assets: [] }
 				for (let i = 0; i &lt; page.balances.length; i++)
-					if(typeof page.balances[i].asset_issuer!='undefined')
-					assets.assets.push({asset_code:page.balances[i].asset_code,asset_issuer:page.balances[i].asset_issuer})
+					if (typeof page.balances[i].asset_issuer != 'undefined')
+						assets.assets.push({ asset_code: page.balances[i].asset_code, asset_issuer: page.balances[i].asset_issuer })
 				resolve(assets)
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 
 	})
@@ -114,6 +114,28 @@ async function getData(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
+			})
+
+	})
+}
+/**
+ * getOffers
+ * retrive account's offers from horizon
+ * @param {string} pubKey - The publicKey of the account
+ * @param {number} limit - How much offer you want back 
+ */
+async function getOffers(pubKey, limit = 10) {
+	return new Promise((resolve, reject) => {
+		server.offers('accounts', pubKey)
+			.limit(limit)
+			.call()
+			.then(page => {
+				resolve(page)
+			})
+			.catch(function (error) {
+				reject(error)
+				return
 			})
 
 	})
@@ -131,6 +153,7 @@ async function getThresholds(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 
 	})
@@ -153,6 +176,7 @@ async function getSigners(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 
 	})
@@ -187,6 +211,7 @@ async function getInflationDestination(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 
 	})
@@ -204,6 +229,7 @@ async function getHomeDomain(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 
 	})
@@ -221,6 +247,7 @@ async function getSequenceNumber(pubKey) {
 			})
 			.catch(function (error) {
 				reject(error)
+				return
 			})
 
 	})
@@ -235,7 +262,8 @@ module.exports = {
 	getHomeDomain,
 	getData,
 	getSequenceNumber,
-	getTrustlines
+	getTrustlines,
+	getOffers
 }</code></pre>
         </article>
     </section>
@@ -246,13 +274,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#bumpSequence">bumpSequence</a></li><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#clearFlag">clearFlag</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getFlags">getFlags</a></li><li><a href="global.html#getHomeDomain">getHomeDomain</a></li><li><a href="global.html#getInflationDestination">getInflationDestination</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#getSequenceNumber">getSequenceNumber</a></li><li><a href="global.html#getSigners">getSigners</a></li><li><a href="global.html#getThresholds">getThresholds</a></li><li><a href="global.html#getTrustlines">getTrustlines</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setFlag">setFlag</a></li><li><a href="global.html#setHighThreshold">setHighThreshold</a></li><li><a href="global.html#setHomeDomain">setHomeDomain</a></li><li><a href="global.html#setInlationDestination">setInlationDestination</a></li><li><a href="global.html#setLowThreshold">setLowThreshold</a></li><li><a href="global.html#setMasterWeight">setMasterWeight</a></li><li><a href="global.html#setMediumThreshold">setMediumThreshold</a></li><li><a href="global.html#setOptions">setOptions</a></li><li><a href="global.html#setSigner">setSigner</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#bumpSequence">bumpSequence</a></li><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#clearFlag">clearFlag</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getAssetInfo">getAssetInfo</a></li><li><a href="global.html#getAssets">getAssets</a></li><li><a href="global.html#getAssetsForIssuer">getAssetsForIssuer</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getFlags">getFlags</a></li><li><a href="global.html#getHomeDomain">getHomeDomain</a></li><li><a href="global.html#getInflationDestination">getInflationDestination</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#getOffers">getOffers</a></li><li><a href="global.html#getOrderbook">getOrderbook</a></li><li><a href="global.html#getSequenceNumber">getSequenceNumber</a></li><li><a href="global.html#getSigners">getSigners</a></li><li><a href="global.html#getThresholds">getThresholds</a></li><li><a href="global.html#getTrustlines">getTrustlines</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setFlag">setFlag</a></li><li><a href="global.html#setHighThreshold">setHighThreshold</a></li><li><a href="global.html#setHomeDomain">setHomeDomain</a></li><li><a href="global.html#setInlationDestination">setInlationDestination</a></li><li><a href="global.html#setLowThreshold">setLowThreshold</a></li><li><a href="global.html#setMasterWeight">setMasterWeight</a></li><li><a href="global.html#setMediumThreshold">setMediumThreshold</a></li><li><a href="global.html#setOptions">setOptions</a></li><li><a href="global.html#setSigner">setSigner</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Feb 07 2019 19:59:02 GMT+0100 (CET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Feb 28 2019 19:53:58 GMT+0100 (GMT+01:00)
 </footer>
 
 <script> prettyPrint(); </script>

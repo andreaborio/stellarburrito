@@ -26,7 +26,20 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/* eslint-disable no-unused-vars */
+            <pre class="prettyprint source linenums"><code>let errorManager = require('./error')
+let memoCreator = require('./memo')
+let StellarSdk = require('stellar-sdk')
+    let config = require('./config')
+    let server
+    let env = config.env
+    if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
+      server = new StellarSdk.Server(config.testnet_horizon)
+      StellarSdk.Network.useTestNetwork()
+    } else {
+      server = new StellarSdk.Server(config.pubnet_horizon)
+      StellarSdk.Network.usePublicNetwork()
+    }
+/* eslint-disable no-unused-vars */
 /**
  * @author Andrea Borio andrea.borio(at)outlook.com
  * 
@@ -45,62 +58,47 @@
  * @param {string} trustLimit - The amount of coin that you want to trust from this issuer
  */
 
-async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'default', startingBalance = '1.501',timeout=15, memoTypeTrust = 'text', memoTrust = 'default', issuer = 'unsetted', assetCode = 'unsetted', trustLimit = 'unsetted') {
+async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'default', startingBalance = '1.501', memoTypeTrust = 'text', memoTrust = 'default', issuer = 'unsetted', assetCode = 'unsetted', trustLimit = 'unsetted', timeout = 15) {
   return new Promise((resolve, reject) => {
-    let config = require('./config')
-    let server
-    let env = config.env
-    let StellarSdk = require('stellar-sdk')
-    if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
-      server = new StellarSdk.Server(config.testnet_horizon)
-      StellarSdk.Network.useTestNetwork()
-    } else {
-      server = new StellarSdk.Server(config.pubnet_horizon)
-      StellarSdk.Network.usePublicNetwork()
+    
+    let memoFinalCreate =memoCreator(memoTypeCreate, memoCreate)
+    if (memoFinalCreate.error) {
+      reject(memoFinalCreate.memo)
+      return
     }
-    let memoFinalCreate
-    switch (memoTypeCreate) {
-      case 'text':
-        memoFinalCreate = StellarSdk.Memo.text(memoCreate)
-        break;
-      case 'id':
-        memoFinalCreate = StellarSdk.Memo.id(memoCreate)
-        break;
-      case 'return':
-        memoFinalCreate = StellarSdk.Memo.return(memoCreate)
-        break;
-      default:
-        reject('invalid memo type')
-        break;
+    if (startingBalance &lt; config.base_reserve) {
+      reject(errorManager('createAccount', -3))
+      return
     }
-    let des = StellarSdk.Keypair.fromSecret(privKey)
+    memoFinalCreate = memoFinalCreate.memo
+    let des
+    try { des = StellarSdk.Keypair.fromSecret(privKey) }
+    catch (err) {
+      reject(errorManager('keyPair', -1))
+      return
+    }
     let newAccount = StellarSdk.Keypair.random()
     server.loadAccount(des.publicKey())
       .catch(StellarSdk.NotFoundError, function (error) {
-        reject({
-          message: 'The creator account for doesn\'t exists.',
-          error
-        });
+        reject(errorManager('loadAccount', -1) + ' your private key')
+        return
       })
       .then(function (sourceAccount) {
         let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
           .addOperation(StellarSdk.Operation.createAccount({
-            destination: newAccount.publicKey(), 
-            startingBalance 
+            destination: newAccount.publicKey(),
+            startingBalance
           }))
           .addMemo(memoFinalCreate)
-          .setTimeout(timeout)
-          .build();
-        transaction.sign(des);
+          .build()
+        transaction.sign(des)
         return server.submitTransaction(transaction)
       })
       .then(function (result) {
         server.loadAccount(newAccount.publicKey())
-          .catch(StellarSdk.NotFoundError, function (error) {
-            reject({
-              message: 'The creator account for doesn\'t exists.',
-              error
-            });
+          .catch(StellarSdk.NotFoundError, function (err) {
+            reject(errorManager('createAccount', -5))
+            return
           })
           .then(function (sourceAccount) {
             if (assetCode === 'unsetted') {
@@ -117,14 +115,20 @@ async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'def
                 })
               })
               .catch(function (error) {
-                reject('Tx error_' + error)
+                if (typeof error.response != 'undefined')
+                reject(errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
+              else
+                reject(error)
+              return
               })
           })
-          .catch(function (error) {
-            reject('Tx error_' + error)
-          })
-
-
+      })
+      .catch(function (err) {
+        if (typeof err.response != 'undefined')
+        reject(errorManager('createAccount', err.response.data.extras.result_codes.operations[0]))
+            else
+        reject(err)
+      return
       })
   })
 }
@@ -142,51 +146,26 @@ async function createAccount(privKey, memoTypeCreate = 'text', memoCreate = 'def
  * 
  */
 
-async function changeTrust(privKey, issuer, assetCode, trustLimit,timeout=15, memoType = 'text', memo = 'default') {
+async function changeTrust(privKey, issuer, assetCode, trustLimit) {
   return new Promise((resolve, reject) => {
-    let config = require('./config')
-    let server
-    let env = config.env
-    let StellarSdk = require('stellar-sdk')
-    if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
-      server = new StellarSdk.Server(config.testnet_horizon)
-      StellarSdk.Network.useTestNetwork()
-    } else {
-      server = new StellarSdk.Server(config.pubnet_horizon)
-      StellarSdk.Network.usePublicNetwork()
-    }
-    var memoFinal;
-    switch (memoType) {
-      case 'text':
-        memoFinal = StellarSdk.Memo.text(memo)
-        break;
-      case 'id':
-        memoFinal = StellarSdk.Memo.id(memo)
-        break;
-      case 'return':
-        memoFinal = StellarSdk.Memo.return(memo)
-        break;
-      default:
-        reject('StellarBurrito_FORMAT_ERR Invalid memo type')
-        break;
-    }
+    
     let des = StellarSdk.Keypair.fromSecret(privKey)
     server.loadAccount(des.publicKey())
       .catch(StellarSdk.NotFoundError, function (error) {
-        reject({
-          message: 'StellarBurrito_KEY_ERR The destination account for change_trust_op doesn\'t exists.',
-          error
-        });
+        reject(errorManager('loadAccount', -1) + ' your private key')
+        return
       })
       .then(function (sourceAccount) {
-        let asset = new StellarSdk.Asset(assetCode, issuer)
+        let asset
+        try { asset = new StellarSdk.Asset(assetCode, issuer) } catch (err) {
+          reject(err)
+          return
+        }
         let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
           .addOperation(StellarSdk.Operation.changeTrust({
-            asset: asset,
+            asset,
             limit: trustLimit
           }))
-          .addMemo(memoFinal)
-          .setTimeout(timeout)
           .build();
         transaction.sign(des);
         return server.submitTransaction(transaction)
@@ -194,8 +173,12 @@ async function changeTrust(privKey, issuer, assetCode, trustLimit,timeout=15, me
       .then(function (result) {
         resolve(result)
       })
-      .catch(function (error) {
-        reject('StellarBurrito_TX_ERR' + error)
+      .catch(function (err) {
+        if (typeof err.response != 'undefined')
+          reject(errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
+        else
+          reject(err)
+        return
       })
 
 
@@ -211,33 +194,19 @@ async function changeTrust(privKey, issuer, assetCode, trustLimit,timeout=15, me
  * 
  */
 
-async function mergeAccount(privKey, destination,timeout=15) {
+async function mergeAccount(privKey, destination) {
   return new Promise((resolve, reject) => {
-    let config = require('./config')
-    let server
-    let env = config.env
-    let StellarSdk = require('stellar-sdk')
-    if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
-      server = new StellarSdk.Server(config.testnet_horizon)
-      StellarSdk.Network.useTestNetwork()
-    } else {
-      server = new StellarSdk.Server(config.pubnet_horizon)
-      StellarSdk.Network.usePublicNetwork()
-    }   
     let des = StellarSdk.Keypair.fromSecret(privKey)
     server.loadAccount(des.publicKey())
       .catch(StellarSdk.NotFoundError, function (error) {
-        reject({
-          message: 'StellarBurrito_KEY_ERR The destination account for merge_op doesn\'t exists.',
-          error
-        });
+        reject(errorManager('loadAccount', -1) + ' your private key')
+        return
       })
       .then(function (sourceAccount) {
-       let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
           .addOperation(StellarSdk.Operation.accountMerge({
             destination
           }))
-          .setTimeout(timeout)
           .build();
         transaction.sign(des);
         return server.submitTransaction(transaction)
@@ -246,10 +215,12 @@ async function mergeAccount(privKey, destination,timeout=15) {
         resolve(result)
       })
       .catch(function (error) {
-        reject('StellarBurrito_TX_ERR' + error)
+        if (typeof error.response != 'undefined')
+          reject(errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
+        else
+          reject(err)
+        return
       })
-
-
   })
 }
 /**
@@ -262,34 +233,20 @@ async function mergeAccount(privKey, destination,timeout=15) {
  * 
  * 
  */
-async function manageData(privKey, name,value,timeout=15) {
+async function manageData(privKey, name, value, timeout = 15) {
   return new Promise((resolve, reject) => {
-    let config = require('./config')
-    let server
-    let env = config.env
-    let StellarSdk = require('stellar-sdk')
-    if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
-      server = new StellarSdk.Server(config.testnet_horizon)
-      StellarSdk.Network.useTestNetwork()
-    } else {
-      server = new StellarSdk.Server(config.pubnet_horizon)
-      StellarSdk.Network.usePublicNetwork()
-    }   
     let des = StellarSdk.Keypair.fromSecret(privKey)
     server.loadAccount(des.publicKey())
       .catch(StellarSdk.NotFoundError, function (error) {
-        reject({
-          message: 'StellarBurrito_KEY_ERR The destination account for managedata_op doesn\'t exists.',
-          error
-        });
+        reject(errorManager('loadAccount', -1) + ' your private key')
+        return
       })
       .then(function (sourceAccount) {
-       let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
+        let transaction = new StellarSdk.TransactionBuilder(sourceAccount)
           .addOperation(StellarSdk.Operation.manageData({
             name,
             value
           }))
-          .setTimeout(timeout)
           .build();
         transaction.sign(des);
         return server.submitTransaction(transaction)
@@ -298,15 +255,13 @@ async function manageData(privKey, name,value,timeout=15) {
         resolve(result)
       })
       .catch(function (error) {
-        reject('StellarBurrito_TX_ERR' + error)
+        if (typeof error.response != 'undefined')
+          reject(errorManager('changeTrust', err.response.data.extras.result_codes.operations[0]))
+        else
+          reject(error)
       })
-
-
   })
 }
-
-
-
 //TODO MergeAccount, createMultipleAccount,Trust Multiple asset
 module.exports = {
   createAccount,
@@ -323,13 +278,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#bumpSequence">bumpSequence</a></li><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#clearFlag">clearFlag</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getFlags">getFlags</a></li><li><a href="global.html#getHomeDomain">getHomeDomain</a></li><li><a href="global.html#getInflationDestination">getInflationDestination</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#getSequenceNumber">getSequenceNumber</a></li><li><a href="global.html#getSigners">getSigners</a></li><li><a href="global.html#getThresholds">getThresholds</a></li><li><a href="global.html#getTrustlines">getTrustlines</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setFlag">setFlag</a></li><li><a href="global.html#setHighThreshold">setHighThreshold</a></li><li><a href="global.html#setHomeDomain">setHomeDomain</a></li><li><a href="global.html#setInlationDestination">setInlationDestination</a></li><li><a href="global.html#setLowThreshold">setLowThreshold</a></li><li><a href="global.html#setMasterWeight">setMasterWeight</a></li><li><a href="global.html#setMediumThreshold">setMediumThreshold</a></li><li><a href="global.html#setOptions">setOptions</a></li><li><a href="global.html#setSigner">setSigner</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#bumpSequence">bumpSequence</a></li><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#clearFlag">clearFlag</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getAssetInfo">getAssetInfo</a></li><li><a href="global.html#getAssets">getAssets</a></li><li><a href="global.html#getAssetsForIssuer">getAssetsForIssuer</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getFlags">getFlags</a></li><li><a href="global.html#getHomeDomain">getHomeDomain</a></li><li><a href="global.html#getInflationDestination">getInflationDestination</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#getOffers">getOffers</a></li><li><a href="global.html#getOrderbook">getOrderbook</a></li><li><a href="global.html#getSequenceNumber">getSequenceNumber</a></li><li><a href="global.html#getSigners">getSigners</a></li><li><a href="global.html#getThresholds">getThresholds</a></li><li><a href="global.html#getTrustlines">getTrustlines</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setFlag">setFlag</a></li><li><a href="global.html#setHighThreshold">setHighThreshold</a></li><li><a href="global.html#setHomeDomain">setHomeDomain</a></li><li><a href="global.html#setInlationDestination">setInlationDestination</a></li><li><a href="global.html#setLowThreshold">setLowThreshold</a></li><li><a href="global.html#setMasterWeight">setMasterWeight</a></li><li><a href="global.html#setMediumThreshold">setMediumThreshold</a></li><li><a href="global.html#setOptions">setOptions</a></li><li><a href="global.html#setSigner">setSigner</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Feb 07 2019 19:59:02 GMT+0100 (CET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Feb 28 2019 19:53:58 GMT+0100 (GMT+01:00)
 </footer>
 
 <script> prettyPrint(); </script>

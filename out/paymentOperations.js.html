@@ -26,7 +26,20 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
+            <pre class="prettyprint source linenums"><code>let config = require('./config')
+let server
+let errorManager = require('./error')
+let memoCreator = require('./memo')
+let env = config.env
+let StellarSdk = require('stellar-sdk')
+if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
+    StellarSdk.Network.useTestNetwork()
+    server = new StellarSdk.Server(config.testnet_horizon)
+} else {
+    StellarSdk.Network.usePublicNetwork()
+    server = new StellarSdk.Server(config.pubnet_horizon)
+}
+/**
  * payment function
  * Sender pays receiver an amount of coin.
  * you can specify more than one receiver and use custom asset and custom memo
@@ -38,40 +51,29 @@
  * @param {string} memoType - The type of memo of the transaction that you want create (text,id,return)
  * @param {string} memo - The content of memo of the change trust transaction that you want create (text,id,return)
  */
-async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'native',timeout=15, memoType = 'text', memo = 'def') {
+async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'native', memoType = 'text', memo = 'default') {
     return new Promise((resolve, reject) => {
-        let config = require('./config')
-        let server
-        let env = config.env
-        let StellarSdk = require('stellar-sdk')
-        if (typeof env != 'undefined' &amp;&amp; env === "testnet") {
-            StellarSdk.Network.useTestNetwork()
-            server = new StellarSdk.Server(config.testnet_horizon)
-        } else {
-            StellarSdk.Network.usePublicNetwork()
-            server = new StellarSdk.Server(config.pubnet_horizon)
-        }
         let memoFinal, asset;
-        switch (memoType) {
-            case 'text':
-                memoFinal = StellarSdk.Memo.text(memo)
-                break;
-            case 'id':
-                memoFinal = StellarSdk.Memo.id(memo)
-                break;
-            case 'return':
-                memoFinal = StellarSdk.Memo.return(memo)
-                break;
-            default:
-                reject('StellarBurrito_FORMAT_ERR Invalid memo type')
-                break;
+        memoFinal = memoCreator(memoType, memo)
+        if (memoFinal.error) {
+            reject(memoFinal.memo)
+            return
         }
-
+        memoFinal = memoFinal.memo
+        let des
+        try { des = StellarSdk.Keypair.fromSecret(sender) }
+        catch (err) {
+            reject(errorManager('keyPair', -1))
+            return
+        }
         if (issuer == "native" &amp;&amp; assetCode == "native")
             asset = new StellarSdk.Asset.native()
         else
-            asset = new StellarSdk.Asset(assetCode, issuer)
-        let des = StellarSdk.Keypair.fromSecret(sender)
+            try { asset = new StellarSdk.Asset(assetCode, issuer) }
+            catch (err) {
+                reject(err)
+                return
+            }
         server.loadAccount(des.publicKey())
             .then(function (sourceAccount) {
                 let builder = new StellarSdk.TransactionBuilder(sourceAccount)
@@ -90,7 +92,6 @@ async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'nat
                         }))
                     }
                 }
-                builder.setTimeout(timeout)
                 builder.addMemo(memoFinal)
                 let transaction = builder.build()
                 transaction.sign(des)
@@ -99,17 +100,22 @@ async function Pay(sender, receiver, amount, assetCode = 'native', issuer = 'nat
                         resolve(result)
                     })
                     .catch(function (error) {
-                        reject('StellarBurrito_TX_ERR ' + error)
+                        console.log(error)
+                        if (typeof error.response != 'undefined')
+                            reject(errorManager('payment', error.response.data.extras.result_codes.operations[0]))
+                        else
+                            reject(err)
+                        return
                     })
             })
-            .catch(StellarSdk.NotFoundError, function (error) {
-                reject('StellarBurrito_KEY_ERR The sender account for payment_op doesn\'t exists.')
+            .catch((error) => {
+                console.log(error)
+                reject(errorManager('loadAccount', -1))
+                return
             })
     })
 }
-module.exports = {
-    Pay
-}</code></pre>
+module.exports = Pay </code></pre>
         </article>
     </section>
 
@@ -119,13 +125,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#bumpSequence">bumpSequence</a></li><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#clearFlag">clearFlag</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getFlags">getFlags</a></li><li><a href="global.html#getHomeDomain">getHomeDomain</a></li><li><a href="global.html#getInflationDestination">getInflationDestination</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#getSequenceNumber">getSequenceNumber</a></li><li><a href="global.html#getSigners">getSigners</a></li><li><a href="global.html#getThresholds">getThresholds</a></li><li><a href="global.html#getTrustlines">getTrustlines</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setFlag">setFlag</a></li><li><a href="global.html#setHighThreshold">setHighThreshold</a></li><li><a href="global.html#setHomeDomain">setHomeDomain</a></li><li><a href="global.html#setInlationDestination">setInlationDestination</a></li><li><a href="global.html#setLowThreshold">setLowThreshold</a></li><li><a href="global.html#setMasterWeight">setMasterWeight</a></li><li><a href="global.html#setMediumThreshold">setMediumThreshold</a></li><li><a href="global.html#setOptions">setOptions</a></li><li><a href="global.html#setSigner">setSigner</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#bumpSequence">bumpSequence</a></li><li><a href="global.html#changeTrust">changeTrust</a></li><li><a href="global.html#clearFlag">clearFlag</a></li><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createAsset">createAsset</a></li><li><a href="global.html#createPassiveOffer">createPassiveOffer</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getAssetInfo">getAssetInfo</a></li><li><a href="global.html#getAssets">getAssets</a></li><li><a href="global.html#getAssetsForIssuer">getAssetsForIssuer</a></li><li><a href="global.html#getBalances">getBalances</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#getFlags">getFlags</a></li><li><a href="global.html#getHomeDomain">getHomeDomain</a></li><li><a href="global.html#getInflationDestination">getInflationDestination</a></li><li><a href="global.html#getLedgers">getLedgers</a></li><li><a href="global.html#getOffers">getOffers</a></li><li><a href="global.html#getOrderbook">getOrderbook</a></li><li><a href="global.html#getSequenceNumber">getSequenceNumber</a></li><li><a href="global.html#getSigners">getSigners</a></li><li><a href="global.html#getThresholds">getThresholds</a></li><li><a href="global.html#getTrustlines">getTrustlines</a></li><li><a href="global.html#manageData">manageData</a></li><li><a href="global.html#manageOffer">manageOffer</a></li><li><a href="global.html#mergeAccount">mergeAccount</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#paymentsHistory">paymentsHistory</a></li><li><a href="global.html#setFlag">setFlag</a></li><li><a href="global.html#setHighThreshold">setHighThreshold</a></li><li><a href="global.html#setHomeDomain">setHomeDomain</a></li><li><a href="global.html#setInlationDestination">setInlationDestination</a></li><li><a href="global.html#setLowThreshold">setLowThreshold</a></li><li><a href="global.html#setMasterWeight">setMasterWeight</a></li><li><a href="global.html#setMediumThreshold">setMediumThreshold</a></li><li><a href="global.html#setOptions">setOptions</a></li><li><a href="global.html#setSigner">setSigner</a></li><li><a href="global.html#transactionsHistory">transactionsHistory</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Feb 07 2019 19:59:02 GMT+0100 (CET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Feb 28 2019 19:53:58 GMT+0100 (GMT+01:00)
 </footer>
 
 <script> prettyPrint(); </script>
