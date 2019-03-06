@@ -7,6 +7,10 @@ const memoCreator = require('./memo')
 const Fee = require('./fee')
 let fee
 class Account {
+    /**
+     * 
+     * @param {string} key -> Pass a public or a private key  
+     */
     constructor(key) {
         fee = new Fee()
         if (typeof env != 'undefined' && env === "testnet") {
@@ -16,7 +20,7 @@ class Account {
             StellarSdk.Network.usePublicNetwork()
             server = new StellarSdk.Server(config.pubnet_horizon)
         }
-        if (typeof key != 'undefined')
+        if (typeof key != 'undefined') {
             if (StellarSdk.StrKey.isValidEd25519SecretSeed(key)) {
                 this.privateKey = key
                 this.publicKey = StellarSdk.Keypair.fromSecret(key).publicKey()
@@ -28,6 +32,7 @@ class Account {
             else {
                 throw ('Wrong key! Please provide a correct PublicKey or a correct PrivateKey')
             }
+        }
         else {
             this.publicKey = null
             this.privateKey = null
@@ -44,7 +49,7 @@ class Account {
         this.trustlines = []
     }
     newKeypair() {
-        key = StellarSdk.Keypair.random()
+        let key = StellarSdk.Keypair.random()
         this.privateKey = key.secret()
         this.publicKey = key.publicKey()
         this.balances = []
@@ -423,10 +428,16 @@ class Account {
                 reject(memoFinal.memo)
                 return
             }
+            if (typeof issuer == 'object' && issuer.constructor.name == "Account")
+                issuer = issuer.publicKey
+            else if (!StellarSdk.StrKey.isValidEd25519PublicKey(issuer)){
+                reject('Invalid issuer ' + errorManager('keyPair', -1))
+                return}
             if (typeof destination == 'object' && destination.constructor.name == "Account")
                 destination = destination.publicKey
-            else if (!StellarSdk.StrKey.isValidEd25519PublicKey(destination))
+            else if (!StellarSdk.StrKey.isValidEd25519PublicKey(destination)){
                 reject('Invalid destination ' + errorManager('keyPair', -1))
+                return}
             memoFinal = memoFinal.memo
             let des
             try { des = StellarSdk.Keypair.fromSecret(this.privateKey) }
@@ -474,7 +485,7 @@ class Account {
                             resolve(result)
                         })
                         .catch(function (error) {
-                            (typeof error.response.data.extras!= 'undefined') ? reject(errorManager('payment', error.response.data.extras.result_codes.operations[0])) : reject(err)
+                            (typeof error.response.data.extras != 'undefined') ? reject(errorManager('payment', error.response.data.extras.result_codes.operations[0])) : reject(err)
                             return
                         })
                 })
@@ -486,30 +497,29 @@ class Account {
         })
     }
 
-  
-   async  createTestAccount() {
-    return new Promise((resolve, reject) => {
-      let pair = StellarSdk.Keypair.random()
-      let that=this
-      let url = 'https://friendbot.stellar.org/?addr=' +pair.publicKey()
-      require('request')(url, function (error, res, body) {
-        if (!error)
-        {
-         that.privateKey=pair.secret()
-         that.publicKey=pair.publicKey()
-          resolve()
-          return
-        }
-        else {
-          if (typeof error.response != 'undefined')
-            reject(errorManager('createAccount', error.response.data.extras.result_codes.operations[0]))
-          else
-            reject(err)
-          return
-        }
-      });
-    })
-  }
+
+    async  createTestAccount() {
+        return new Promise((resolve, reject) => {
+            let pair = StellarSdk.Keypair.random()
+            let that = this
+            let url = 'https://friendbot.stellar.org/?addr=' + pair.publicKey()
+            require('request')(url, function (error, res, body) {
+                if (!error) {
+                    that.privateKey = pair.secret()
+                    that.publicKey = pair.publicKey()
+                    resolve()
+                    return
+                }
+                else {
+                    if (typeof error.response != 'undefined')
+                        reject(errorManager('createAccount', error.response.data.extras.result_codes.operations[0]))
+                    else
+                        reject(err)
+                    return
+                }
+            });
+        })
+    }
     /**
     * @author Andrea Borio andrea.borio(at)outlook.com
     * 
@@ -604,9 +614,7 @@ class Account {
      * changeTrust function
      *
      * 
-     * @param {string} memoType - The type of memo of the transaction that you want create (text,id,return)
-     * @param {string} memo - The content of memo of the change trust transaction that you want create (text,id,return)
-     * @param {string} issuer - The public key of the issuer 
+      * @param {string} issuer - The public key of the issuer 
      * @param {string} assetCode - The assetCode of the asset that you want to trust
      * @param {string} trustLimit - The amount of coin that you want to trust from this issuer
      * 
@@ -616,9 +624,11 @@ class Account {
     async  changeTrust(issuer, assetCode, trustLimit) {
         return new Promise((resolve, reject) => {
             if (typeof issuer == 'object' && issuer.constructor.name == "Account")
-            issuer = issuer.publicKey
-        else if (!StellarSdk.StrKey.isValidEd25519PublicKey(issuer))
-            reject('Invalid issuer ' + errorManager('keyPair', -1))
+                issuer = issuer.publicKey
+            else if (!StellarSdk.StrKey.isValidEd25519PublicKey(issuer)){
+                reject('Invalid issuer ' + errorManager('keyPair', -1))
+                return 
+            }
             let des = StellarSdk.Keypair.fromSecret(this.privateKey)
             server.loadAccount(des.publicKey())
                 .catch(StellarSdk.NotFoundError, function (error) {
@@ -797,18 +807,18 @@ class Account {
         })
     }
 
-   /**
-     * Manage Offer function
-     * @param {string} opts#sellingCode {string} -Asset code that you want to sell
-     * @param {string} opts#sellingIssuer {string}  - Issuer's publicKey of the Asset that you want to sell
-     * @param {string} opts#amount {string} - The amount of coin that you want to sell
-     * @param {JSON} opts#price {json}- Issuer's publicKey of the Asset that you want to sell
-     * @param {string} opts#offerId {string} - If 0 create new offer
-     * @param {string} opts#buyingCode {string} - Asset code that you want to buy
-     * @param {string} opts#buyingIssuer {string} - Issuer's publicKey of the Asset that you want to sell
-     * @param {string} opts#source {string} - The source account (defaults to transaction source).
-     * @returns {JSON} result
-     */
+    /**
+      * Manage Offer function
+      * @param {string} opts#sellingCode {string} -Asset code that you want to sell
+      * @param {string} opts#sellingIssuer {string}  - Issuer's publicKey of the Asset that you want to sell
+      * @param {string} opts#amount {string} - The amount of coin that you want to sell
+      * @param {JSON} opts#price {json}- Issuer's publicKey of the Asset that you want to sell
+      * @param {string} opts#offerId {string} - If 0 create new offer
+      * @param {string} opts#buyingCode {string} - Asset code that you want to buy
+      * @param {string} opts#buyingIssuer {string} - Issuer's publicKey of the Asset that you want to sell
+      * @param {string} opts#source {string} - The source account (defaults to transaction source).
+      * @returns {JSON} result
+      */
     async manageOffer(opts = {}) {
         return new Promise((resolve, reject) => {
             let sellingCode = opts.sellingCode || 'native'
